@@ -1,8 +1,7 @@
 package configuration
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"meteor/filesystem"
 )
 
 const defaultProfilePath = "/profiles"
@@ -14,16 +13,13 @@ type Configuration struct {
 
 // GetConfiguration reads a configuration file and returns back a configuration object.
 // In the event the file could not be read the a default configuration is returned instread.
-func GetConfiguration(configurationFile string) Configuration {
-	raw, err := ioutil.ReadFile(configurationFile)
+func GetConfiguration(path, configurationFile string) Configuration {
+	var configuration Configuration
+
+	err := filesystem.New(path).ReadJSONFile(configurationFile, &configuration)
 
 	if err != nil {
 		return Configuration{defaultProfilePath}
 	}
-
-	var configuration Configuration
-
-	json.Unmarshal(raw, &configuration)
-
 	return configuration
 }
