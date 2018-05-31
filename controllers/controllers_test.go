@@ -4,6 +4,7 @@ import (
 	"errors"
 	"meteor/types"
 	"testing"
+	"meteor/tests"
 )
 
 type sampleProfiles struct {
@@ -30,8 +31,8 @@ func TestGetProfiles(t *testing.T) {
 
 	response := NewProfilesController(profiles).GetAll()
 
-	expectedContentType("application/json", response.ContentType, t)
-	expectedStatusCode(200, response.StatusCode, t)
+	tests.ExpectedContentType("application/json", response.ContentType, t)
+	tests.ExpectedStatusCode(200, response.StatusCode, t)
 
 	responseBody := response.Body.([]types.Profile)
 
@@ -45,5 +46,5 @@ func TestGetProfilesError(t *testing.T) {
 
 	response := NewProfilesController(profiles).GetAll()
 
-	expectedStatusCode(500, response.StatusCode, t)
+	tests.ExpectedStatusCode(500, response.StatusCode, t)
 }
