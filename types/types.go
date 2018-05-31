@@ -1,5 +1,10 @@
 package types
 
+// Configuration represents the content of the configuratio file
+type Configuration struct {
+	ProfilePath string `json:"profile_path"`
+}
+
 // Profile represents a profile
 type Profile struct {
 	Name     string
