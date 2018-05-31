@@ -25,18 +25,6 @@ func (p sampleProfiles) GetProfile(profileName string) (types.Profile, error) {
 	return types.Profile{}, errors.New("Profile not foun")
 }
 
-func expectedContentType(expected, actual string, t *testing.T) {
-	if expected != actual {
-		t.Errorf("Expected content type %s but got %s", expected, actual)
-	}
-}
-
-func expectedStatusCode(expected, actual int, t *testing.T) {
-	if expected != actual {
-		t.Errorf("Expected status code %d but got %d", expected, actual)
-	}
-}
-
 func TestGetProfiles(t *testing.T) {
 	profiles := sampleProfiles{[]types.Profile{types.Profile{}}, nil}
 
