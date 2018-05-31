@@ -15,6 +15,6 @@ func TestGetConfigurationReturnsDefaultConfiguration(t *testing.T) {
 	configuration := GetConfiguration("../test_data", "file_does_not_exist.json")
 
 	if configuration.ProfilePath != "/profiles" {
-		t.Errorf("GetConfiguration did not return the default configuration. Expected ProfilePath to be /profiles but got %s", configuration.ProfilePath)
+		t.Errorf("Expected ProfilePath to be /profiles but got %s", configuration.ProfilePath)
 	}
 }
