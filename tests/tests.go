@@ -16,15 +16,15 @@ func ExpectNoError(err error, t *testing.T) {
 	}
 }
 
-// ExpectedContentType is used to check that the current content type was received
-func ExpectedContentType(expected, actual string, t *testing.T) {
+// ExpectContentType is used to check that the current content type was received
+func ExpectContentType(expected, actual string, t *testing.T) {
 	if expected != actual {
 		t.Errorf("Expected content type %s but got %s", expected, actual)
 	}
 }
 
-// ExpectedStatusCode is used to check that the current status code was received
-func ExpectedStatusCode(expected, actual int, t *testing.T) {
+// ExpectStatusCode is used to check that the current status code was received
+func ExpectStatusCode(expected, actual int, t *testing.T) {
 	if expected != actual {
 		t.Errorf("Expected status code %d but got %d", expected, actual)
 	}
