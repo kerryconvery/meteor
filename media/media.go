@@ -42,3 +42,8 @@ func (m Provider) GetLocalMedia(path string) ([]Media, error) {
 
 	return mediaFiles, nil
 }
+
+// PathExists return whether or not the path exists in the file system
+func (m Provider) PathExists(path string) (bool, error) {
+	return m.filesystem.FileExists(path, "")
+}

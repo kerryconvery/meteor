@@ -6,6 +6,7 @@ import (
 	"meteor/filesystem"
 	"meteor/media"
 	"meteor/profiles"
+	"path/filepath"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
@@ -23,7 +24,7 @@ func handleError(ctx context.Context, err error) {
 	ctx.WriteString(err.Error())
 }
 
-func beforeGetProfile(profilePath string) func(ctx context.Context) {
+func checkProfile(profilePath string) func(ctx context.Context) {
 	return func(ctx context.Context) {
 		profileProvider := profiles.New(profilePath)
 		profileName := ctx.Params().Get("profilename")
@@ -34,6 +35,31 @@ func beforeGetProfile(profilePath string) func(ctx context.Context) {
 		} else if exists != true {
 			ctx.StatusCode(404)
 			ctx.WriteString("profile " + profileName + " not found")
+		} else {
+			ctx.Next()
+		}
+	}
+}
+
+func checkPath(profilePath string, filesystem filesystem.Filesystem) func(ctx context.Context) {
+	return func(ctx context.Context) {
+		if ctx.URLParamExists("path") {
+			path := ctx.URLParam("path")
+			profileProvider := profiles.New(profilePath)
+			mediaProvider := media.New("", filesystem)
+			profileName := ctx.Params().Get("profilename")
+			profile, _ := profileProvider.GetProfile(profileName)
+
+			exists, err := mediaProvider.PathExists(filepath.Join(profile.MediaPath, path))
+
+			if err != nil {
+				handleError(ctx, err)
+			} else if exists != true {
+				ctx.StatusCode(404)
+				ctx.WriteString("path " + path + " not found")
+			} else {
+				ctx.Next()
+			}
 		} else {
 			ctx.Next()
 		}
@@ -63,30 +89,24 @@ func main() {
 		}
 	})
 
-	app.Get("api/profiles/{profilename}/media", beforeGetProfile(config.ProfilePath), func(ctx context.Context) {
-		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem))
+	app.Get("api/profiles/{profilename}/media",
+		checkProfile(config.ProfilePath),
+		checkPath(config.ProfilePath, filesystem),
+		func(ctx context.Context) {
+			controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem))
 
-		response, err := controller.GetMedia(ctx.Params().Get("profilename"), "")
+			path := ""
+			if ctx.URLParamExists("path") {
+				path = ctx.URLParamTrim("path")
+			}
+			response, err := controller.GetMedia(ctx.Params().Get("profilename"), path)
 
-		if err != nil {
-			handleError(ctx, err)
-		} else {
-			handleJSONResponse(ctx, response)
-		}
-	})
-
-	app.Get("api/profiles/{profilename}/media/{path}", beforeGetProfile(config.ProfilePath), func(ctx context.Context) {
-		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem))
-
-		params := ctx.Params()
-		response, err := controller.GetMedia(params.Get("profilename"), params.Get("path"))
-
-		if err != nil {
-			handleError(ctx, err)
-		} else {
-			handleJSONResponse(ctx, response)
-		}
-	})
+			if err != nil {
+				handleError(ctx, err)
+			} else {
+				handleJSONResponse(ctx, response)
+			}
+		})
 
 	app.Get("api/profiles/{profilename}/media/{media}/thumbnail", func(ctx context.Context) {
 

@@ -28,6 +28,18 @@ func (f sampleFiles) GetFiles(path string) ([]filesystem.File, error) {
 	return []filesystem.File{}, errors.New("unknown path")
 }
 
+func (f sampleFiles) GetFileExists(path, fileName string) (bool, error) {
+	if path == "path_exists" {
+		return true, nil
+	}
+
+	if path == "path_not_found" {
+		return false, nil
+	}
+
+	return false, errors.New("erorr")
+}
+
 func TestGetLocalMedia(t *testing.T) {
 	provider := New("", sampleFiles{})
 
@@ -50,7 +62,6 @@ func TestGetLocalMedia(t *testing.T) {
 	if files[2].IsDirectory != true {
 		t.Error("Expected to be a directory but got a file")
 	}
-
 }
 
 func TestGetLocalMediaError(t *testing.T) {
@@ -59,4 +70,28 @@ func TestGetLocalMediaError(t *testing.T) {
 	_, err := provider.GetLocalMedia("MediaC")
 
 	tests.ExpectError(err, t)
+}
+
+func TestPathExists(t *testing.T) {
+	provider := New("", sampleFiles{})
+
+	exists, err := provider.PathExists("valid_path")
+
+	tests.ExpectNoError(err, t)
+
+	if exists != true {
+		t.Errorf("Expected true but got false")
+	}
+}
+
+func TestPathExistsNotFound(t *testing.T) {
+	provider := New("", sampleFiles{})
+
+	exists, err := provider.PathExists("path_not_found")
+
+	tests.ExpectNoError(err, t)
+
+	if exists != false {
+		t.Errorf("Expected false but got true")
+	}
 }

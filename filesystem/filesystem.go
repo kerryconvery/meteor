@@ -65,5 +65,5 @@ func (f localFilesystem) FileExists(path, fileName string) (bool, error) {
 	if os.IsNotExist(err) {
 		return false, nil
 	}
-	return true, err
+	return false, err
 }
