@@ -36,7 +36,6 @@ func (m Provider) GetLocalMedia(path string) ([]Media, error) {
 		mediaFiles = append(mediaFiles, Media{
 			Name:        file.Name,
 			IsDirectory: file.IsDirectory,
-			Thumbnail:   m.mediaRoute + "/" + file.Name + "/thumbnail",
 		})
 	}
 

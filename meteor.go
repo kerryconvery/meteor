@@ -6,17 +6,23 @@ import (
 	"meteor/filesystem"
 	"meteor/media"
 	"meteor/profiles"
+	"meteor/thumbnails"
 	"path/filepath"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
 )
 
-// mapJSONResponseToIris call the appropriate iris methods for each response field
 func handleJSONResponse(ctx context.Context, response controllers.JSONResponse) {
 	ctx.StatusCode(response.StatusCode)
 	ctx.ContentType(response.ContentType)
 	ctx.JSON(response.Body)
+}
+
+func handleBinaryResponse(ctx context.Context, response controllers.BinaryResponse) {
+	ctx.StatusCode(response.StatusCode)
+	ctx.ContentType(response.ContentType)
+	ctx.Binary(response.Body.Bytes())
 }
 
 func handleError(ctx context.Context, err error) {
@@ -78,7 +84,9 @@ func main() {
 	})
 
 	app.Get("api/profiles", func(ctx context.Context) {
-		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem))
+		thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
+
+		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem), thumbnailProvider)
 
 		response, err := controller.GetAll()
 
@@ -89,27 +97,41 @@ func main() {
 		}
 	})
 
-	app.Get("api/profiles/{profilename}/media",
-		checkProfile(config.ProfilePath),
-		checkPath(config.ProfilePath, filesystem),
-		func(ctx context.Context) {
-			controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem))
+	app.Get("api/profiles/{profilename}/media", func(ctx context.Context) {
+		thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 
-			path := ""
-			if ctx.URLParamExists("path") {
-				path = ctx.URLParamTrim("path")
-			}
-			response, err := controller.GetMedia(ctx.Params().Get("profilename"), path)
+		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem), thumbnailProvider)
 
-			if err != nil {
-				handleError(ctx, err)
-			} else {
-				handleJSONResponse(ctx, response)
-			}
-		})
+		path := ""
+		if ctx.URLParamExists("path") {
+			path = ctx.URLParamTrim("path")
+		}
+		response, err := controller.GetMedia(ctx.Params().Get("profilename"), path)
+
+		if err != nil {
+			handleError(ctx, err)
+		} else {
+			handleJSONResponse(ctx, response)
+		}
+	})
 
 	app.Get("api/profiles/{profilename}/media/{media}/thumbnail", func(ctx context.Context) {
+		thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 
+		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem), thumbnailProvider)
+
+		path := ""
+		if ctx.URLParamExists("path") {
+			path = ctx.URLParamTrim("path")
+		}
+		params := ctx.Params()
+		response, err := controller.GetMediaThumbnail(params.Get("profilename"), path, params.Get("media"))
+
+		if err != nil {
+			handleError(ctx, err)
+		} else {
+			handleBinaryResponse(ctx, response)
+		}
 	})
 
 	app.Run(iris.Addr(":8080"))

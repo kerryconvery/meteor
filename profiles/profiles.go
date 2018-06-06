@@ -13,26 +13,26 @@ type Profile struct {
 	ParentalPassword string `json:"parentalPassword"`
 }
 
-// ProfileProvider represents a provider of profiles
-type ProfileProvider interface {
+// Provider represents a profileProvider of profiles
+type Provider interface {
 	GetProfiles() ([]Profile, error)
 	GetProfile(profileName string) (Profile, error)
 	ProfileExists(profileName string) (bool, error)
 }
 
-// Provider represents the IO operations for profiles
-type Provider struct {
+// profileProvider represents the IO operations for profiles
+type profileProvider struct {
 	path       string
 	filesystem filesystem.Filesystem
 }
 
-// New creates a new instance of Provider
+// New creates a new instance of profileProvider
 func New(profilePath string) Provider {
-	return Provider{path: profilePath, filesystem: filesystem.New()}
+	return profileProvider{path: profilePath, filesystem: filesystem.New()}
 }
 
 // GetProfiles returns back a list of profiles
-func (p Provider) GetProfiles() ([]Profile, error) {
+func (p profileProvider) GetProfiles() ([]Profile, error) {
 	files, err := p.filesystem.GetFiles(p.path)
 	if err != nil {
 		return []Profile{}, err
@@ -53,7 +53,7 @@ func (p Provider) GetProfiles() ([]Profile, error) {
 }
 
 // GetProfile returns back a Profile of the given name
-func (p Provider) GetProfile(profileName string) (Profile, error) {
+func (p profileProvider) GetProfile(profileName string) (Profile, error) {
 	profile := Profile{}
 	err := p.filesystem.ReadJSONFile(p.path, profileName+".json", &profile)
 	if err != nil {
@@ -64,7 +64,7 @@ func (p Provider) GetProfile(profileName string) (Profile, error) {
 }
 
 // ProfileExists returns if a profile exists or not
-func (p Provider) ProfileExists(profileName string) (bool, error) {
+func (p profileProvider) ProfileExists(profileName string) (bool, error) {
 	return p.filesystem.FileExists(p.path, profileName+".json")
 }
 

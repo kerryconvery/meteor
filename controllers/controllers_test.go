@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"meteor/filesystem"
 	"meteor/media"
 	"meteor/profiles"
 	"meteor/tests"
+	"path/filepath"
 	"testing"
 )
 
@@ -59,8 +62,21 @@ func (p sampleProfiles) GetProfile(profileName string) (profiles.Profile, error)
 	return profiles.Profile{}, errors.New("Profile not found")
 }
 
-func NewController(provider profiles.ProfileProvider) ProfilesController {
-	return NewProfilesController(provider, media.New("", sampleFiles{}))
+const noImage = "No Image"
+const thumbnailImage = "Thumbnail Image"
+
+type mockThumbnailProvider struct{}
+
+func (m mockThumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffer, error) {
+	fullpath := filepath.Join(path, filename)
+	if fullpath == "MediaA\\sub_path\\no_error" {
+		return bytes.NewBufferString(thumbnailImage), nil
+	}
+	return bytes.NewBufferString(noImage), fmt.Errorf("Could not find %s", fullpath)
+}
+
+func NewController(provider profiles.Provider) ProfilesController {
+	return NewProfilesController(provider, media.New("", sampleFiles{}), mockThumbnailProvider{})
 }
 
 func TestGetProfiles(t *testing.T) {
@@ -83,7 +99,7 @@ func TestGetProfiles(t *testing.T) {
 func TestGetProfilesError(t *testing.T) {
 	profiles := sampleProfiles{profiles: []profiles.Profile{}, err: errors.New("Could not read profiles")}
 
-	_, err := NewProfilesController(profiles, media.New("", sampleFiles{})).GetAll()
+	_, err := NewProfilesController(profiles, media.New("", sampleFiles{}), mockThumbnailProvider{}).GetAll()
 
 	tests.ExpectError(err, t)
 }
@@ -151,6 +167,52 @@ func TestGetMediaFilesError(t *testing.T) {
 	controller := NewController(profiles)
 
 	_, err := controller.GetMedia("ProfileC", "")
+
+	tests.ExpectError(err, t)
+}
+
+func TestGetMediaThumbnail(t *testing.T) {
+	profiles := sampleProfiles{profiles: []profiles.Profile{
+		profiles.Profile{Name: "ProfileA", MediaPath: "MediaA"}},
+		err: nil,
+	}
+
+	controller := NewController(profiles)
+
+	response, err := controller.GetMediaThumbnail("ProfileA", "sub_path", "no_error")
+
+	tests.ExpectNoError(err, t)
+	tests.ExpectStatusCode(200, response.StatusCode, t)
+	tests.ExpectContentType("image/png", response.ContentType, t)
+
+	thumbnail := response.Body.String()
+
+	if thumbnail != thumbnailImage {
+		t.Errorf("Expected %s but got %s", thumbnailImage, thumbnail)
+	}
+}
+
+func TestGetMediaThumbnailInvalidProfile(t *testing.T) {
+	profiles := sampleProfiles{profiles: []profiles.Profile{
+		profiles.Profile{Name: "ProfileA", MediaPath: "MediaA"}},
+		err: nil,
+	}
+
+	controller := NewController(profiles)
+
+	_, err := controller.GetMediaThumbnail("ProfileB", "sub_path", "no_error")
+
+	tests.ExpectError(err, t)
+}
+func TestGetMediaThumbnailInvalidThumbnail(t *testing.T) {
+	profiles := sampleProfiles{profiles: []profiles.Profile{
+		profiles.Profile{Name: "ProfileA", MediaPath: "MediaA"}},
+		err: nil,
+	}
+
+	controller := NewController(profiles)
+
+	_, err := controller.GetMediaThumbnail("ProfileA", "sub_path", "has_error")
 
 	tests.ExpectError(err, t)
 }

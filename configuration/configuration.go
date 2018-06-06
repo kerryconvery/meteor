@@ -5,10 +5,14 @@ import (
 )
 
 const defaultProfilePath = "/profiles"
+const defaultThumbnailPath = "/assets/thumbnails"
+const defaultAssetPath = "/assets"
 
 // Configuration represents the content of the configuratio file
 type Configuration struct {
-	ProfilePath string `json:"profilePath"`
+	ProfilePath   string `json:"profilePath"`
+	ThumbnailPath string `json:"thumbnailPath"`
+	AssetPath     string `json:"assetPath"`
 }
 
 // GetConfiguration reads a configuration file and returns back a configuration object.
@@ -19,7 +23,8 @@ func GetConfiguration(path, configurationFile string, filesystem filesystem.File
 	err := filesystem.ReadJSONFile(path, configurationFile, &configuration)
 
 	if err != nil {
-		return Configuration{defaultProfilePath}
+		return Configuration{defaultProfilePath, defaultThumbnailPath, defaultAssetPath}
 	}
+
 	return configuration
 }

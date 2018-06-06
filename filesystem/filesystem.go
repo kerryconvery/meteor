@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -17,6 +18,7 @@ type File struct {
 type Filesystem interface {
 	GetFiles(path string) ([]File, error)
 	ReadJSONFile(path string, fileName string, content interface{}) error
+	ReadImageFile(path, fileName string) (*bytes.Buffer, error)
 	FileExists(path, fileName string) (bool, error)
 }
 
@@ -66,4 +68,14 @@ func (f localFilesystem) FileExists(path, fileName string) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+func (f localFilesystem) ReadImageFile(path, fileName string) (*bytes.Buffer, error) {
+	raw, err := ioutil.ReadFile(filepath.Join(path, fileName))
+
+	if err != nil {
+		return &bytes.Buffer{}, err
+	}
+
+	return bytes.NewBuffer(raw), nil
 }
