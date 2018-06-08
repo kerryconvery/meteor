@@ -2,7 +2,6 @@ package thumbnails
 
 import (
 	"bytes"
-	"fmt"
 	"meteor/filesystem"
 	"os/exec"
 	"path/filepath"
@@ -79,7 +78,6 @@ func (p imageSource) addThumbnail(filename string, image *bytes.Buffer) (int, er
 
 // Generate extracts a thumbnail from a video file and returns a buffer containing the image
 func (p imageSource) generateVideoThumbnail(source string) (*bytes.Buffer, error) {
-	fmt.Println(source)
 	cmd := exec.Command(
 		"ffmpeg",
 		"-ss",
