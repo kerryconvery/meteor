@@ -70,27 +70,3 @@ func TestGetLocalMediaError(t *testing.T) {
 
 	tests.ExpectError(err, t)
 }
-
-func TestPathExists(t *testing.T) {
-	provider := New(sampleFiles{})
-
-	exists, err := provider.PathExists("path_exists")
-
-	tests.ExpectNoError(err, t)
-
-	if exists != true {
-		t.Errorf("Expected true but got false")
-	}
-}
-
-func TestPathExistsNotFound(t *testing.T) {
-	provider := New(sampleFiles{})
-
-	exists, err := provider.PathExists("path_not_found")
-
-	tests.ExpectNoError(err, t)
-
-	if exists != false {
-		t.Errorf("Expected false but got true")
-	}
-}

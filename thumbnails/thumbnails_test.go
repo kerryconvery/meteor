@@ -59,7 +59,7 @@ func TestGetThumbnailGenerate(t *testing.T) {
 		t.Errorf("Expected text '%s' but got %s", generatedImage, imageStr)
 	}
 
-	if imageSource.file != "valid_path\\gen_image" {
+	if imageSource.file != "gen_image" {
 		t.Errorf("Expected file valid_path\\gen_image but got %s", imageSource)
 	}
 }

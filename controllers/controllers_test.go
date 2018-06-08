@@ -76,7 +76,7 @@ func (m mockThumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffe
 }
 
 func NewController(provider profiles.Provider) ProfilesController {
-	return NewProfilesController(provider, media.New("", sampleFiles{}), mockThumbnailProvider{})
+	return NewProfilesController(provider, media.New(sampleFiles{}), mockThumbnailProvider{})
 }
 
 func TestGetProfiles(t *testing.T) {
@@ -99,7 +99,7 @@ func TestGetProfiles(t *testing.T) {
 func TestGetProfilesError(t *testing.T) {
 	profiles := sampleProfiles{profiles: []profiles.Profile{}, err: errors.New("Could not read profiles")}
 
-	_, err := NewProfilesController(profiles, media.New("", sampleFiles{}), mockThumbnailProvider{}).GetAll()
+	_, err := NewProfilesController(profiles, media.New(sampleFiles{}), mockThumbnailProvider{}).GetAll()
 
 	tests.ExpectError(err, t)
 }
