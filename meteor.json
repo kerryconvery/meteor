@@ -1,3 +1,5 @@
 {
-    "profilePath": "C:\\Source\\mpc-mate\\middleware\\profiles"
+    "profilePath": "C:\\Source\\mpc-mate\\middleware\\profiles",
+    "assetPath": "./assets",
+    "thumbnailPath": "./assets/thumbnails"
 }

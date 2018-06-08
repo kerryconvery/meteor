@@ -54,15 +54,15 @@ func replace(a, b interface{}) {
 	ra.Set(rb)
 }
 func NewProfilesValidPath() Provider {
-	return Provider{"valid_path", sampleFiles{}}
+	return profileProvider{"valid_path", sampleFiles{}}
 }
 
 func NewProfilesInvalidPath() Provider {
-	return Provider{"invalid_path", sampleFiles{}}
+	return profileProvider{"invalid_path", sampleFiles{}}
 }
 
 func NewProfilesWithInvalidFile() Provider {
-	return Provider{"invalid_file", sampleFiles{}}
+	return profileProvider{"invalid_file", sampleFiles{}}
 }
 
 func TestGetProfiles(t *testing.T) {

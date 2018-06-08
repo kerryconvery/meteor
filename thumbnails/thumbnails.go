@@ -2,7 +2,7 @@ package thumbnails
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"meteor/filesystem"
 	"os/exec"
 	"path/filepath"
@@ -12,12 +12,18 @@ type imageProvider interface {
 	getDefaultImage() (*bytes.Buffer, error)
 	getExistingThumbnail(fileName string) (*bytes.Buffer, error)
 	generateVideoThumbnail(source string) (*bytes.Buffer, error)
+	addThumbnail(filename string, image *bytes.Buffer) (int, error)
+}
+
+type fileSource interface {
+	ReadFile(path, fileName string) (*bytes.Buffer, error)
+	WriteFile(path, fileName string, buffer *bytes.Buffer) (int, error)
 }
 
 type imageSource struct {
 	thumbnailPath    string
 	defaultImagePath string
-	filesystem       filesystem.Filesystem
+	files            fileSource
 }
 
 // Provider represents a thumbnail provider
@@ -31,13 +37,13 @@ type thumbnailProvider struct {
 
 // New returns a new instance of the thumbnail provider
 func New(thumbnailPath, defaultImagePath string, filesystem filesystem.Filesystem) Provider {
-	return thumbnailProvider{
-		imageSource{
-			thumbnailPath:    thumbnailPath,
-			defaultImagePath: defaultImagePath,
-			filesystem:       filesystem,
-		},
+	source := imageSource{
+		thumbnailPath:    thumbnailPath,
+		defaultImagePath: defaultImagePath,
+		files:            filesystem,
 	}
+
+	return thumbnailProvider{source}
 }
 
 // GetThumbnail returns a thumbnail for the supplied video file
@@ -51,6 +57,8 @@ func (p thumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffer, e
 	generatedImage, err := p.imageSource.generateVideoThumbnail(filepath.Join(path, filename))
 
 	if err == nil {
+		p.imageSource.addThumbnail(filename, generatedImage)
+
 		return generatedImage, nil
 	}
 
@@ -58,32 +66,39 @@ func (p thumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffer, e
 }
 
 func (p imageSource) getDefaultImage() (*bytes.Buffer, error) {
-	return p.filesystem.ReadImageFile(p.defaultImagePath, "file.png")
+	return p.files.ReadFile(p.defaultImagePath, "file.png")
 }
 
 func (p imageSource) getExistingThumbnail(fileName string) (*bytes.Buffer, error) {
-	return p.filesystem.ReadImageFile(p.thumbnailPath, fileName)
+	return p.files.ReadFile(p.thumbnailPath, fileName+".jpg")
+}
+
+func (p imageSource) addThumbnail(filename string, image *bytes.Buffer) (int, error) {
+	return p.files.WriteFile(p.thumbnailPath, filename+".jpg", image)
 }
 
 // Generate extracts a thumbnail from a video file and returns a buffer containing the image
 func (p imageSource) generateVideoThumbnail(source string) (*bytes.Buffer, error) {
-	// fmt.Sprintf("ffmpeg -ss 00:05:00.00 -i '%s' -filter:v 'scale=64:64:force_original_aspect_ratio=decrease' -vframes 1 -q:v 2 '%s'")
-
+	fmt.Println(source)
 	cmd := exec.Command(
 		"ffmpeg",
-		"-ss 00:05:00.00",
+		"-ss",
+		"00:05:00.00",
 		"-i",
 		source,
-		"-filter:v 'scale=64:64:force_original_aspect_ratio=decrease'",
 		"-vframes",
 		"1",
-		"-q:v 2",
-	)
-
+		"-s",
+		"64x64",
+		"-f",
+		"singlejpeg",
+		"-")
 	var buffer bytes.Buffer
 	cmd.Stdout = &buffer
-	if cmd.Run() != nil {
-		return &buffer, errors.New("could not generate thumbnail")
+	err := cmd.Run()
+	if err != nil {
+		return &buffer, err
 	}
+
 	return &buffer, nil
 }

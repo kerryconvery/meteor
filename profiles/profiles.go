@@ -20,20 +20,26 @@ type Provider interface {
 	ProfileExists(profileName string) (bool, error)
 }
 
+type fileSource interface {
+	GetFiles(path string) ([]filesystem.File, error)
+	ReadJSONFile(path string, fileName string, content interface{}) error
+	FileExists(path, fileName string) (bool, error)
+}
+
 // profileProvider represents the IO operations for profiles
 type profileProvider struct {
-	path       string
-	filesystem filesystem.Filesystem
+	path   string
+	source fileSource
 }
 
 // New creates a new instance of profileProvider
 func New(profilePath string) Provider {
-	return profileProvider{path: profilePath, filesystem: filesystem.New()}
+	return profileProvider{path: profilePath, source: filesystem.New()}
 }
 
 // GetProfiles returns back a list of profiles
 func (p profileProvider) GetProfiles() ([]Profile, error) {
-	files, err := p.filesystem.GetFiles(p.path)
+	files, err := p.source.GetFiles(p.path)
 	if err != nil {
 		return []Profile{}, err
 	}
@@ -55,7 +61,7 @@ func (p profileProvider) GetProfiles() ([]Profile, error) {
 // GetProfile returns back a Profile of the given name
 func (p profileProvider) GetProfile(profileName string) (Profile, error) {
 	profile := Profile{}
-	err := p.filesystem.ReadJSONFile(p.path, profileName+".json", &profile)
+	err := p.source.ReadJSONFile(p.path, profileName+".json", &profile)
 	if err != nil {
 		return profile, err
 	}
@@ -65,7 +71,7 @@ func (p profileProvider) GetProfile(profileName string) (Profile, error) {
 
 // ProfileExists returns if a profile exists or not
 func (p profileProvider) ProfileExists(profileName string) (bool, error) {
-	return p.filesystem.FileExists(p.path, profileName+".json")
+	return p.source.FileExists(p.path, profileName+".json")
 }
 
 // StripFileExtension returns a file name with the extension including the final dot removed

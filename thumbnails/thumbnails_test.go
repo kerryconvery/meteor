@@ -8,6 +8,7 @@ import (
 )
 
 type mockImageSource struct {
+	file         string
 	defaultError error
 }
 
@@ -36,8 +37,17 @@ func (p mockImageSource) getExistingThumbnail(filename string) (*bytes.Buffer, e
 	}
 	return bytes.NewBufferString(noImage), errors.New("Existing image not found")
 }
+
+func (p *mockImageSource) addThumbnail(filename string, image *bytes.Buffer) (int, error) {
+	if p.defaultError == nil {
+		p.file = filename
+		return 100, nil
+	}
+	return 0, p.defaultError
+}
 func TestGetThumbnailGenerate(t *testing.T) {
-	provider := thumbnailProvider{imageSource: mockImageSource{}}
+	imageSource := mockImageSource{}
+	provider := thumbnailProvider{imageSource: &imageSource}
 
 	thumbnail, err := provider.GetThumbnail("valid_path", "gen_image")
 
@@ -48,10 +58,23 @@ func TestGetThumbnailGenerate(t *testing.T) {
 	if imageStr != generatedImage {
 		t.Errorf("Expected text '%s' but got %s", generatedImage, imageStr)
 	}
+
+	if imageSource.file != "valid_path\\gen_image" {
+		t.Errorf("Expected file valid_path\\gen_image but got %s", imageSource)
+	}
+}
+
+func TestGetThumbnailAddFileError(t *testing.T) {
+	defaultError := errors.New("Error adding new file")
+	provider := thumbnailProvider{imageSource: &mockImageSource{defaultError: defaultError}}
+
+	_, err := provider.GetThumbnail("valid_path", "gen_image")
+
+	tests.ExpectNoError(err, t)
 }
 
 func TestGetThumbnailExisting(t *testing.T) {
-	provider := thumbnailProvider{imageSource: mockImageSource{}}
+	provider := thumbnailProvider{imageSource: &mockImageSource{}}
 
 	thumbnail, err := provider.GetThumbnail("valid_path", "existing_image")
 
@@ -63,9 +86,8 @@ func TestGetThumbnailExisting(t *testing.T) {
 		t.Errorf("Expected text '%s' but got %s", existingImage, imageStr)
 	}
 }
-
 func TestGetThumbnailDefault(t *testing.T) {
-	provider := thumbnailProvider{imageSource: mockImageSource{}}
+	provider := thumbnailProvider{imageSource: &mockImageSource{}}
 
 	thumbnail, err := provider.GetThumbnail("valid_path", "gen_failed")
 
@@ -78,7 +100,11 @@ func TestGetThumbnailDefault(t *testing.T) {
 	}
 }
 func TestGetThumbnailError(t *testing.T) {
-	provider := thumbnailProvider{imageSource: mockImageSource{errors.New("Could not read default image")}}
+	provider := thumbnailProvider{
+		imageSource: &mockImageSource{
+			defaultError: errors.New("Could not read default image"),
+		},
+	}
 
 	_, err := provider.GetThumbnail("valid_path", "gen_failed")
 

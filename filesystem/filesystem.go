@@ -18,7 +18,8 @@ type File struct {
 type Filesystem interface {
 	GetFiles(path string) ([]File, error)
 	ReadJSONFile(path string, fileName string, content interface{}) error
-	ReadImageFile(path, fileName string) (*bytes.Buffer, error)
+	ReadFile(path, fileName string) (*bytes.Buffer, error)
+	WriteFile(path, fileName string, buffer *bytes.Buffer) (int, error)
 	FileExists(path, fileName string) (bool, error)
 }
 
@@ -70,7 +71,7 @@ func (f localFilesystem) FileExists(path, fileName string) (bool, error) {
 	return false, err
 }
 
-func (f localFilesystem) ReadImageFile(path, fileName string) (*bytes.Buffer, error) {
+func (f localFilesystem) ReadFile(path, fileName string) (*bytes.Buffer, error) {
 	raw, err := ioutil.ReadFile(filepath.Join(path, fileName))
 
 	if err != nil {
@@ -78,4 +79,16 @@ func (f localFilesystem) ReadImageFile(path, fileName string) (*bytes.Buffer, er
 	}
 
 	return bytes.NewBuffer(raw), nil
+}
+
+func (f localFilesystem) WriteFile(path, fileName string, buffer *bytes.Buffer) (int, error) {
+	file, err := os.OpenFile(filepath.Join(path, fileName), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+
+	if err != nil {
+		return 0, err
+	}
+
+	defer file.Close()
+
+	return file.Write(buffer.Bytes())
 }

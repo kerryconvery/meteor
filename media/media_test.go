@@ -8,7 +8,6 @@ import (
 )
 
 type sampleFiles struct {
-	filesystem.Filesystem
 }
 
 func (f sampleFiles) GetFiles(path string) ([]filesystem.File, error) {
@@ -28,7 +27,7 @@ func (f sampleFiles) GetFiles(path string) ([]filesystem.File, error) {
 	return []filesystem.File{}, errors.New("unknown path")
 }
 
-func (f sampleFiles) GetFileExists(path, fileName string) (bool, error) {
+func (f sampleFiles) FileExists(path, fileName string) (bool, error) {
 	if path == "path_exists" {
 		return true, nil
 	}
@@ -41,7 +40,7 @@ func (f sampleFiles) GetFileExists(path, fileName string) (bool, error) {
 }
 
 func TestGetLocalMedia(t *testing.T) {
-	provider := New("", sampleFiles{})
+	provider := New(sampleFiles{})
 
 	files, err := provider.GetLocalMedia("MediaB")
 
@@ -65,7 +64,7 @@ func TestGetLocalMedia(t *testing.T) {
 }
 
 func TestGetLocalMediaError(t *testing.T) {
-	provider := New("", sampleFiles{})
+	provider := New(sampleFiles{})
 
 	_, err := provider.GetLocalMedia("MediaC")
 
@@ -73,9 +72,9 @@ func TestGetLocalMediaError(t *testing.T) {
 }
 
 func TestPathExists(t *testing.T) {
-	provider := New("", sampleFiles{})
+	provider := New(sampleFiles{})
 
-	exists, err := provider.PathExists("valid_path")
+	exists, err := provider.PathExists("path_exists")
 
 	tests.ExpectNoError(err, t)
 
@@ -85,7 +84,7 @@ func TestPathExists(t *testing.T) {
 }
 
 func TestPathExistsNotFound(t *testing.T) {
-	provider := New("", sampleFiles{})
+	provider := New(sampleFiles{})
 
 	exists, err := provider.PathExists("path_not_found")
 

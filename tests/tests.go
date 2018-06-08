@@ -1,6 +1,8 @@
 package tests
 
-import "testing"
+import (
+	"testing"
+)
 
 // ExpectError is used when you are expecting an error
 func ExpectError(err error, t *testing.T) {

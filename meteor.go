@@ -7,7 +7,6 @@ import (
 	"meteor/media"
 	"meteor/profiles"
 	"meteor/thumbnails"
-	"path/filepath"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
@@ -30,52 +29,12 @@ func handleError(ctx context.Context, err error) {
 	ctx.WriteString(err.Error())
 }
 
-func checkProfile(profilePath string) func(ctx context.Context) {
-	return func(ctx context.Context) {
-		profileProvider := profiles.New(profilePath)
-		profileName := ctx.Params().Get("profilename")
-		exists, err := profileProvider.ProfileExists(profileName)
-
-		if err != nil {
-			handleError(ctx, err)
-		} else if exists != true {
-			ctx.StatusCode(404)
-			ctx.WriteString("profile " + profileName + " not found")
-		} else {
-			ctx.Next()
-		}
-	}
-}
-
-func checkPath(profilePath string, filesystem filesystem.Filesystem) func(ctx context.Context) {
-	return func(ctx context.Context) {
-		if ctx.URLParamExists("path") {
-			path := ctx.URLParam("path")
-			profileProvider := profiles.New(profilePath)
-			mediaProvider := media.New("", filesystem)
-			profileName := ctx.Params().Get("profilename")
-			profile, _ := profileProvider.GetProfile(profileName)
-
-			exists, err := mediaProvider.PathExists(filepath.Join(profile.MediaPath, path))
-
-			if err != nil {
-				handleError(ctx, err)
-			} else if exists != true {
-				ctx.StatusCode(404)
-				ctx.WriteString("path " + path + " not found")
-			} else {
-				ctx.Next()
-			}
-		} else {
-			ctx.Next()
-		}
-	}
-}
-
 func main() {
 	filesystem := filesystem.New()
-	config := configuration.GetConfiguration("./", "meteor.json", filesystem)
+	config, _ := configuration.GetConfiguration("./", "meteor.json", filesystem)
 	profileProvider := profiles.New(config.ProfilePath)
+	thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
+	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
 
 	app := iris.New()
 
@@ -84,11 +43,7 @@ func main() {
 	})
 
 	app.Get("api/profiles", func(ctx context.Context) {
-		thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
-
-		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem), thumbnailProvider)
-
-		response, err := controller.GetAll()
+		response, err := profileController.GetAll()
 
 		if err != nil {
 			handleError(ctx, err)
@@ -98,15 +53,11 @@ func main() {
 	})
 
 	app.Get("api/profiles/{profilename}/media", func(ctx context.Context) {
-		thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
-
-		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem), thumbnailProvider)
-
 		path := ""
 		if ctx.URLParamExists("path") {
 			path = ctx.URLParamTrim("path")
 		}
-		response, err := controller.GetMedia(ctx.Params().Get("profilename"), path)
+		response, err := profileController.GetMedia(ctx.Params().Get("profilename"), path)
 
 		if err != nil {
 			handleError(ctx, err)
@@ -116,16 +67,16 @@ func main() {
 	})
 
 	app.Get("api/profiles/{profilename}/media/{media}/thumbnail", func(ctx context.Context) {
-		thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
-
-		controller := controllers.NewProfilesController(profileProvider, media.New(ctx.Path(), filesystem), thumbnailProvider)
-
 		path := ""
 		if ctx.URLParamExists("path") {
 			path = ctx.URLParamTrim("path")
 		}
-		params := ctx.Params()
-		response, err := controller.GetMediaThumbnail(params.Get("profilename"), path, params.Get("media"))
+
+		response, err := profileController.GetMediaThumbnail(
+			ctx.Params().Get("profilename"),
+			path,
+			ctx.Params().Get("media"),
+		)
 
 		if err != nil {
 			handleError(ctx, err)

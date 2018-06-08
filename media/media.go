@@ -11,20 +11,24 @@ type Media struct {
 	Thumbnail   string `json:"thumbnail"`
 }
 
+type fileSource interface {
+	GetFiles(path string) ([]filesystem.File, error)
+	FileExists(path, fileName string) (bool, error)
+}
+
 // Provider represents all media
 type Provider struct {
-	mediaRoute string
-	filesystem filesystem.Filesystem
+	source fileSource
 }
 
 // New returns a new instance of Provider
-func New(mediaRoute string, filesystem filesystem.Filesystem) Provider {
-	return Provider{mediaRoute: mediaRoute, filesystem: filesystem}
+func New(source fileSource) Provider {
+	return Provider{source: source}
 }
 
 // GetLocalMedia returns a list of media files at the designated path
 func (m Provider) GetLocalMedia(path string) ([]Media, error) {
-	files, err := m.filesystem.GetFiles(path)
+	files, err := m.source.GetFiles(path)
 
 	if err != nil {
 		return []Media{}, err
@@ -44,5 +48,5 @@ func (m Provider) GetLocalMedia(path string) ([]Media, error) {
 
 // PathExists return whether or not the path exists in the file system
 func (m Provider) PathExists(path string) (bool, error) {
-	return m.filesystem.FileExists(path, "")
+	return m.source.FileExists(path, "")
 }

@@ -93,17 +93,17 @@ func TestFileFolderDoesNotExists(t *testing.T) {
 	}
 }
 
-func TestReadImageFile(t *testing.T) {
-	image, err := New().ReadImage("../test_data", "sample.png")
+func TestReadFile(t *testing.T) {
+	image, err := New().ReadFile("../test_data", "sample.png")
 
 	tests.ExpectNoError(err, t)
 
-	if image.len == 0 {
+	if image.Len() == 0 {
 		t.Errorf("Expected more than 0 bytes but got 0")
 	}
 }
-func TestReadImageFileError(t *testing.T) {
-	_, err := New().ReadImage("../test_data", "file_not_found.png")
+func TestReadFileError(t *testing.T) {
+	_, err := New().ReadFile("../test_data", "file_not_found.png")
 
 	tests.ExpectError(err, t)
 }
