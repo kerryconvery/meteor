@@ -1,5 +1,17 @@
 {
     "profilePath": "C:\\Source\\mpc-mate\\middleware\\profiles",
     "assetPath": "./assets",
-    "thumbnailPath": "./assets/thumbnails"
+    "thumbnailPath": "./assets/thumbnails",
+    "mediaplayers": [
+        {
+            "id": "mpc",
+            "name": "Media Player Classic",
+            "launchCmd": "C:\\Program Files\\MPC-BE x64\\mpc-be64.exe",
+            "launchArgs": [		
+                "/play",
+                "/fullscreen",
+                "/close"
+            ]
+        }
+    ]
 }

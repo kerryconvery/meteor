@@ -8,9 +8,10 @@ import (
 
 // Profile represents a profile
 type Profile struct {
-	Name             string `json:"name"`
-	MediaPath        string `json:"mediaPath"`
-	ParentalPassword string `json:"parentalPassword"`
+	Name             string   `json:"name"`
+	MediaPath        string   `json:"mediaPath"`
+	ParentalPassword string   `json:"parentalPassword"`
+	MediaArgs        []string `json:"mediaArgs"`
 }
 
 // Provider represents a profileProvider of profiles

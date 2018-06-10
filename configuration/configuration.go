@@ -4,11 +4,19 @@ import (
 	"meteor/filesystem"
 )
 
+// MediaPlayerConfiguration represents the configuration needed to launch a media player
+type MediaPlayerConfiguration struct {
+	Name       string   `json:"name"`
+	LaunchCmd  string   `json:"launchCmd"`
+	LaunchArgs []string `json:"launchArgs"`
+}
+
 // Configuration represents the content of the configuratio file
 type Configuration struct {
-	ProfilePath   string `json:"profilePath"`
-	ThumbnailPath string `json:"thumbnailPath"`
-	AssetPath     string `json:"assetPath"`
+	ProfilePath   string                     `json:"profilePath"`
+	ThumbnailPath string                     `json:"thumbnailPath"`
+	AssetPath     string                     `json:"assetPath"`
+	MediaPlayers  []MediaPlayerConfiguration `json:"mediaplayers"`
 }
 
 // GetConfiguration reads a configuration file and returns back a configuration object.

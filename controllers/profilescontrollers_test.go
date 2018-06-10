@@ -75,14 +75,18 @@ func (m mockThumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffe
 	return bytes.NewBufferString(noImage), fmt.Errorf("Could not find %s", fullpath)
 }
 
-func NewController(provider profiles.Provider) ProfilesController {
-	return NewProfilesController(provider, media.New(sampleFiles{}), mockThumbnailProvider{})
+func GetProfilesController(profileProvider profiles.Provider) ProfilesController {
+	return NewProfilesController(
+		profileProvider,
+		media.New(sampleFiles{}),
+		mockThumbnailProvider{},
+	)
 }
 
 func TestGetProfiles(t *testing.T) {
 	mockProfiles := sampleProfiles{profiles: []profiles.Profile{profiles.Profile{}}, err: nil}
 
-	response, err := NewController(mockProfiles).GetAll()
+	response, err := GetProfilesController(mockProfiles).GetAll()
 
 	tests.ExpectNoError(err, t)
 
@@ -99,7 +103,11 @@ func TestGetProfiles(t *testing.T) {
 func TestGetProfilesError(t *testing.T) {
 	profiles := sampleProfiles{profiles: []profiles.Profile{}, err: errors.New("Could not read profiles")}
 
-	_, err := NewProfilesController(profiles, media.New(sampleFiles{}), mockThumbnailProvider{}).GetAll()
+	_, err := NewProfilesController(
+		profiles,
+		media.New(sampleFiles{}),
+		mockThumbnailProvider{},
+	).GetAll()
 
 	tests.ExpectError(err, t)
 }
@@ -112,7 +120,7 @@ func TestGetMediaFiles(t *testing.T) {
 		err: nil,
 	}
 
-	controller := NewController(profiles)
+	controller := GetProfilesController(profiles)
 
 	response, err := controller.GetMedia("ProfileB", "")
 
@@ -141,7 +149,7 @@ func TestGetMediaFilesSubPath(t *testing.T) {
 		err: nil,
 	}
 
-	controller := NewController(profiles)
+	controller := GetProfilesController(profiles)
 
 	response, err := controller.GetMedia("ProfileB", "more movies")
 
@@ -164,7 +172,7 @@ func TestGetMediaFilesError(t *testing.T) {
 		err: nil,
 	}
 
-	controller := NewController(profiles)
+	controller := GetProfilesController(profiles)
 
 	_, err := controller.GetMedia("ProfileC", "")
 
@@ -177,7 +185,7 @@ func TestGetMediaThumbnail(t *testing.T) {
 		err: nil,
 	}
 
-	controller := NewController(profiles)
+	controller := GetProfilesController(profiles)
 
 	response, err := controller.GetMediaThumbnail("ProfileA", "sub_path", "no_error")
 
@@ -198,7 +206,7 @@ func TestGetMediaThumbnailInvalidProfile(t *testing.T) {
 		err: nil,
 	}
 
-	controller := NewController(profiles)
+	controller := GetProfilesController(profiles)
 
 	_, err := controller.GetMediaThumbnail("ProfileB", "sub_path", "no_error")
 
@@ -210,7 +218,7 @@ func TestGetMediaThumbnailInvalidThumbnail(t *testing.T) {
 		err: nil,
 	}
 
-	controller := NewController(profiles)
+	controller := GetProfilesController(profiles)
 
 	_, err := controller.GetMediaThumbnail("ProfileA", "sub_path", "has_error")
 

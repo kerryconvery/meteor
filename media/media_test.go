@@ -39,8 +39,12 @@ func (f sampleFiles) FileExists(path, fileName string) (bool, error) {
 	return false, errors.New("erorr")
 }
 
+func newMediaProvider() Provider {
+	return New(sampleFiles{})
+}
+
 func TestGetLocalMedia(t *testing.T) {
-	provider := New(sampleFiles{})
+	provider := newMediaProvider()
 
 	files, err := provider.GetLocalMedia("MediaB")
 
@@ -64,7 +68,7 @@ func TestGetLocalMedia(t *testing.T) {
 }
 
 func TestGetLocalMediaError(t *testing.T) {
-	provider := New(sampleFiles{})
+	provider := newMediaProvider()
 
 	_, err := provider.GetLocalMedia("MediaC")
 

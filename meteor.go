@@ -5,6 +5,7 @@ import (
 	"meteor/controllers"
 	"meteor/filesystem"
 	"meteor/media"
+	"meteor/mediaplayers"
 	"meteor/profiles"
 	"meteor/thumbnails"
 
@@ -35,6 +36,10 @@ func main() {
 	profileProvider := profiles.New(config.ProfilePath)
 	thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
+	mediaController := controllers.NewMediaController(
+		profileProvider,
+		mediaplayers.New(config.MediaPlayers[0].LaunchCmd, config.MediaPlayers[0].LaunchArgs),
+	)
 
 	app := iris.New()
 
@@ -82,6 +87,15 @@ func main() {
 			handleError(ctx, err)
 		} else {
 			handleBinaryResponse(ctx, response)
+		}
+	})
+
+	app.Post("api/profiles/{profilename}/media/{media}", func(ctx context.Context) {
+		response, err := mediaController.LaunchMediaFile(ctx.Params().Get("profilename"), ctx.Params().Get("media"))
+		if err != nil {
+			handleError(ctx, err)
+		} else {
+			handleJSONResponse(ctx, response)
 		}
 	})
 
