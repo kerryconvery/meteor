@@ -23,14 +23,19 @@ func NewMediaController(profilesProvider profileSource, mediaPlayer mediaplayers
 }
 
 // LaunchMediaFile plays a media file
-func (c MediaController) LaunchMediaFile(profileName, mediafile string) (JSONResponse, error) {
+func (c MediaController) LaunchMediaFile(profileName, mediafile string) (TextResponse, error) {
 	profile, err := c.profilesProvider.GetProfile(profileName)
 
 	if err != nil {
-		return JSONResponse{}, err
+		return TextResponse{}, err
 	}
 
 	playerErr := c.mediaPlayer.Play(filepath.Join(profile.MediaPath, mediafile), profile.MediaArgs)
 
-	return c.JSONResponse(201, nil), playerErr
+	return c.TextResponse(201, ""), playerErr
+}
+
+// CloseMediaPlayer instructs the media player to close
+func (c MediaController) CloseMediaPlayer() error {
+	return c.mediaPlayer.Exit()
 }

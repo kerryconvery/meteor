@@ -9,6 +9,7 @@ type MediaPlayerConfiguration struct {
 	Name       string   `json:"name"`
 	LaunchCmd  string   `json:"launchCmd"`
 	LaunchArgs []string `json:"launchArgs"`
+	APIUrl     string   `json:"apiUrl"`
 }
 
 // Configuration represents the content of the configuratio file

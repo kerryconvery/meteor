@@ -28,6 +28,10 @@ func (m mockMediaPlayer) Play(media string, mediaArgs []string) error {
 	return fmt.Errorf("Invalid media %s or args %s", media, mediaArgs)
 }
 
+func (m mockMediaPlayer) Exit() error {
+	return nil
+}
+
 func GetMediaController() MediaController {
 	return NewMediaController(profilesProvider{}, mockMediaPlayer{})
 }

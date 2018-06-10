@@ -25,6 +25,12 @@ func handleBinaryResponse(ctx context.Context, response controllers.BinaryRespon
 	ctx.Binary(response.Body.Bytes())
 }
 
+func handleTextResponse(ctx context.Context, response controllers.TextResponse) {
+	ctx.StatusCode(response.StatusCode)
+	ctx.ContentType(response.ContentType)
+	ctx.Text(response.Body)
+}
+
 func handleError(ctx context.Context, err error) {
 	ctx.StatusCode(500)
 	ctx.WriteString(err.Error())
@@ -38,7 +44,11 @@ func main() {
 	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
 	mediaController := controllers.NewMediaController(
 		profileProvider,
-		mediaplayers.New(config.MediaPlayers[0].LaunchCmd, config.MediaPlayers[0].LaunchArgs),
+		mediaplayers.New(
+			config.MediaPlayers[0].LaunchCmd,
+			config.MediaPlayers[0].LaunchArgs,
+			config.MediaPlayers[0].APIUrl,
+		),
 	)
 
 	app := iris.New()
@@ -95,7 +105,14 @@ func main() {
 		if err != nil {
 			handleError(ctx, err)
 		} else {
-			handleJSONResponse(ctx, response)
+			handleTextResponse(ctx, response)
+		}
+	})
+
+	app.Delete("api/profiles/{profilename}/media", func(ctx context.Context) {
+		err := mediaController.CloseMediaPlayer()
+		if err != nil {
+			handleError(ctx, err)
 		}
 	})
 

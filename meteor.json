@@ -11,7 +11,8 @@
                 "/play",
                 "/fullscreen",
                 "/close"
-            ]
+            ],
+            "apiUrl": "http://localhost:13579"
         }
     ]
 }
