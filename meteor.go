@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
 	"meteor/configuration"
 	"meteor/controllers"
 	"meteor/filesystem"
@@ -8,32 +11,32 @@ import (
 	"meteor/mediaplayers"
 	"meteor/profiles"
 	"meteor/thumbnails"
+	"net/http"
 
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/context"
+	"github.com/julienschmidt/httprouter"
 )
 
-func handleJSONResponse(ctx context.Context, response controllers.JSONResponse) {
-	ctx.StatusCode(response.StatusCode)
-	ctx.ContentType(response.ContentType)
-	ctx.JSON(response.Body)
+func handleJSONResponse(writer http.ResponseWriter, response controllers.JSONResponse) {
+	writer.WriteHeader(response.StatusCode)
+	writer.Header().Set("Content-Type", response.ContentType)
+	json.NewEncoder(writer).Encode(response.Body)
 }
 
-func handleBinaryResponse(ctx context.Context, response controllers.BinaryResponse) {
-	ctx.StatusCode(response.StatusCode)
-	ctx.ContentType(response.ContentType)
-	ctx.Binary(response.Body.Bytes())
+func handleBinaryResponse(writer http.ResponseWriter, response controllers.BinaryResponse) {
+	writer.WriteHeader(response.StatusCode)
+	writer.Header().Set("Content-Type", response.ContentType)
+	writer.Write(response.Body.Bytes())
 }
 
-func handleTextResponse(ctx context.Context, response controllers.TextResponse) {
-	ctx.StatusCode(response.StatusCode)
-	ctx.ContentType(response.ContentType)
-	ctx.Text(response.Body)
+func handleTextResponse(writer http.ResponseWriter, response controllers.TextResponse) {
+	writer.WriteHeader(response.StatusCode)
+	writer.Header().Set("Content-Type", response.ContentType)
+	fmt.Fprint(writer, response.Body)
 }
 
-func handleError(ctx context.Context, err error) {
-	ctx.StatusCode(500)
-	ctx.WriteString(err.Error())
+func handleError(writer http.ResponseWriter, err error) {
+	writer.WriteHeader(http.StatusInternalServerError)
+	fmt.Fprint(writer, err.Error())
 }
 
 func main() {
@@ -51,96 +54,81 @@ func main() {
 		),
 	)
 
-	app := iris.New()
+	router := httprouter.New()
 
-	app.Get("/", func(ctx context.Context) {
-		ctx.Text("Hello World")
+	router.GET("/", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		fmt.Fprint(w, "Welcome")
 	})
 
-	app.Get("api/profiles", func(ctx context.Context) {
+	router.GET("/api/profiles", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		response, err := profileController.GetAll()
 
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		} else {
-			handleJSONResponse(ctx, response)
+			handleJSONResponse(w, response)
 		}
 	})
 
-	app.Get("api/profiles/{profilename}/media", func(ctx context.Context) {
-		path := ""
-		if ctx.URLParamExists("path") {
-			path = ctx.URLParamTrim("path")
-		}
-		response, err := profileController.GetMedia(ctx.Params().Get("profilename"), path)
+	router.GET("/api/profiles/:profilename/media", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		path := r.URL.Query().Get("path")
+
+		response, err := profileController.GetMedia(ps.ByName("profilename"), path)
 
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		} else {
-			handleJSONResponse(ctx, response)
+			handleJSONResponse(w, response)
 		}
 	})
 
-	app.Get("api/profiles/{profilename}/media/{media}/thumbnail", func(ctx context.Context) {
-		path := ""
-		if ctx.URLParamExists("path") {
-			path = ctx.URLParamTrim("path")
-		}
-
+	router.GET("/api/profiles/:profilename/media/:media/thumbnail", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		response, err := profileController.GetMediaThumbnail(
-			ctx.Params().Get("profilename"),
-			path,
-			ctx.Params().Get("media"),
+			ps.ByName("profilename"),
+			r.URL.Query().Get("path"),
+			ps.ByName("media"),
 		)
 
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		} else {
-			handleBinaryResponse(ctx, response)
+			handleBinaryResponse(w, response)
 		}
 	})
 
-	app.Post("api/media", func(ctx context.Context) {
-		profileName := ""
-		URI := ""
-
-		if ctx.URLParamExists("profile") {
-			profileName = ctx.URLParamTrim("profile")
-		}
-
-		if ctx.URLParamExists("uri") {
-			URI = ctx.URLParamTrim("uri")
-		}
+	router.POST("/api/media", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		profileName := r.URL.Query().Get("profile")
+		URI := r.URL.Query().Get("uri")
 
 		response, err := mediaController.LaunchMediaFile(profileName, URI)
 
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		} else {
-			handleTextResponse(ctx, response)
+			handleTextResponse(w, response)
 		}
 	})
 
-	app.Delete("api/media", func(ctx context.Context) {
+	router.DELETE("/api/media", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := mediaController.CloseMediaPlayer()
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		}
 	})
 
-	app.Post("api/media/pause", func(ctx context.Context) {
+	router.POST("/api/media/pause", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := mediaController.PauseMediaPlayer()
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		}
 	})
 
-	app.Post("api/media/resume", func(ctx context.Context) {
+	router.POST("/api/media/resume", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := mediaController.ResumeMediaPlayer()
 		if err != nil {
-			handleError(ctx, err)
+			handleError(w, err)
 		}
 	})
 
-	app.Run(iris.Addr(":8080"))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
