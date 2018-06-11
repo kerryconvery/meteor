@@ -32,6 +32,14 @@ func (m mockMediaPlayer) Exit() error {
 	return nil
 }
 
+func (m mockMediaPlayer) Pause() error {
+	return nil
+}
+
+func (m mockMediaPlayer) Resume() error {
+	return nil
+}
+
 func GetMediaController() MediaController {
 	return NewMediaController(profilesProvider{}, mockMediaPlayer{})
 }

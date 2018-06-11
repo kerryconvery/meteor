@@ -39,3 +39,13 @@ func (c MediaController) LaunchMediaFile(profileName, mediafile string) (TextRes
 func (c MediaController) CloseMediaPlayer() error {
 	return c.mediaPlayer.Exit()
 }
+
+// PauseMediaPlayer instructs the media player to close
+func (c MediaController) PauseMediaPlayer() error {
+	return c.mediaPlayer.Pause()
+}
+
+// ResumeMediaPlayer instructs the media player to close
+func (c MediaController) ResumeMediaPlayer() error {
+	return c.mediaPlayer.Resume()
+}

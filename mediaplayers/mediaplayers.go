@@ -1,9 +1,7 @@
 package mediaplayers
 
 import (
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os/exec"
@@ -14,6 +12,8 @@ import (
 type MediaPlayer interface {
 	Play(media string, mediaArgs []string) error
 	Exit() error
+	Pause() error
+	Resume() error
 }
 
 type mediaPlayerClassic struct {
@@ -56,30 +56,22 @@ func (m mediaPlayerClassic) Play(media string, mediaArgs []string) error {
 	return cmd.Start()
 }
 
-func (m mediaPlayerClassic) sendCommand(command string) (*http.Response, error) {
-	response, err := http.PostForm(
+func (m mediaPlayerClassic) sendCommand(command string) error {
+	_, err := http.PostForm(
 		fmt.Sprintf("%s/command.html", m.apiURL),
 		url.Values{"wm_command": {command}},
 	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if response.StatusCode >= 400 {
-		body, _ := ioutil.ReadAll(response.Body)
-		return nil, errors.New(string(body))
-	}
-
-	return response, nil
+	return err
 }
 
 func (m mediaPlayerClassic) Exit() error {
-	_, err := m.sendCommand("816")
+	return m.sendCommand("816")
+}
 
-	if err != nil {
-		return err
-	}
+func (m mediaPlayerClassic) Pause() error {
+	return m.sendCommand("888")
+}
 
-	return nil
+func (m mediaPlayerClassic) Resume() error {
+	return m.sendCommand("887")
 }

@@ -100,8 +100,20 @@ func main() {
 		}
 	})
 
-	app.Post("api/profiles/{profilename}/media/{media}", func(ctx context.Context) {
-		response, err := mediaController.LaunchMediaFile(ctx.Params().Get("profilename"), ctx.Params().Get("media"))
+	app.Post("api/media", func(ctx context.Context) {
+		profileName := ""
+		URI := ""
+
+		if ctx.URLParamExists("profile") {
+			profileName = ctx.URLParamTrim("profile")
+		}
+
+		if ctx.URLParamExists("uri") {
+			URI = ctx.URLParamTrim("uri")
+		}
+
+		response, err := mediaController.LaunchMediaFile(profileName, URI)
+
 		if err != nil {
 			handleError(ctx, err)
 		} else {
@@ -109,8 +121,22 @@ func main() {
 		}
 	})
 
-	app.Delete("api/profiles/{profilename}/media", func(ctx context.Context) {
+	app.Delete("api/media", func(ctx context.Context) {
 		err := mediaController.CloseMediaPlayer()
+		if err != nil {
+			handleError(ctx, err)
+		}
+	})
+
+	app.Post("api/media/pause", func(ctx context.Context) {
+		err := mediaController.PauseMediaPlayer()
+		if err != nil {
+			handleError(ctx, err)
+		}
+	})
+
+	app.Post("api/media/resume", func(ctx context.Context) {
+		err := mediaController.ResumeMediaPlayer()
 		if err != nil {
 			handleError(ctx, err)
 		}
