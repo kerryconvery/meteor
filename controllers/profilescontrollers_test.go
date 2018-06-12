@@ -8,7 +8,6 @@ import (
 	"meteor/media"
 	"meteor/profiles"
 	"meteor/tests"
-	"path/filepath"
 	"testing"
 )
 
@@ -67,12 +66,11 @@ const thumbnailImage = "Thumbnail Image"
 
 type mockThumbnailProvider struct{}
 
-func (m mockThumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffer, error) {
-	fullpath := filepath.Join(path, filename)
-	if fullpath == "MediaA\\sub_path\\no_error" {
+func (m mockThumbnailProvider) GetThumbnail(filename string) (*bytes.Buffer, error) {
+	if filename == "MediaA\\sub_path\\no_error" {
 		return bytes.NewBufferString(thumbnailImage), nil
 	}
-	return bytes.NewBufferString(noImage), fmt.Errorf("Could not find %s", fullpath)
+	return bytes.NewBufferString(noImage), fmt.Errorf("Could not find %s", filename)
 }
 
 func GetProfilesController(profileProvider profiles.Provider) ProfilesController {
@@ -187,7 +185,7 @@ func TestGetMediaThumbnail(t *testing.T) {
 
 	controller := GetProfilesController(profiles)
 
-	response, err := controller.GetMediaThumbnail("ProfileA", "sub_path", "no_error")
+	response, err := controller.GetMediaThumbnail("ProfileA", "sub_path\\no_error")
 
 	tests.ExpectNoError(err, t)
 	tests.ExpectStatusCode(200, response.StatusCode, t)
@@ -208,7 +206,7 @@ func TestGetMediaThumbnailInvalidProfile(t *testing.T) {
 
 	controller := GetProfilesController(profiles)
 
-	_, err := controller.GetMediaThumbnail("ProfileB", "sub_path", "no_error")
+	_, err := controller.GetMediaThumbnail("ProfileB", "sub_path\\no_error")
 
 	tests.ExpectError(err, t)
 }
@@ -220,7 +218,7 @@ func TestGetMediaThumbnailInvalidThumbnail(t *testing.T) {
 
 	controller := GetProfilesController(profiles)
 
-	_, err := controller.GetMediaThumbnail("ProfileA", "sub_path", "has_error")
+	_, err := controller.GetMediaThumbnail("ProfileA", "sub_path\\has_error")
 
 	tests.ExpectError(err, t)
 }

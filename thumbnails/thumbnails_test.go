@@ -3,6 +3,7 @@ package thumbnails
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"meteor/tests"
 	"testing"
 )
@@ -18,6 +19,7 @@ const defaultImage = "Default Image"
 const existingImage = "Existing Image"
 
 func (p mockImageSource) generateVideoThumbnail(filename string) (*bytes.Buffer, error) {
+	fmt.Println(filename)
 	if filename == "valid_path\\gen_image" {
 		return bytes.NewBufferString(generatedImage), nil
 	}
@@ -32,7 +34,7 @@ func (p mockImageSource) getDefaultImage() (*bytes.Buffer, error) {
 }
 
 func (p mockImageSource) getExistingThumbnail(filename string) (*bytes.Buffer, error) {
-	if filename == "existing_image" {
+	if filename == "existing_image.jpg" {
 		return bytes.NewBufferString(existingImage), nil
 	}
 	return bytes.NewBufferString(noImage), errors.New("Existing image not found")
@@ -49,7 +51,7 @@ func TestGetThumbnailGenerate(t *testing.T) {
 	imageSource := mockImageSource{}
 	provider := thumbnailProvider{imageSource: &imageSource}
 
-	thumbnail, err := provider.GetThumbnail("valid_path", "gen_image")
+	thumbnail, err := provider.GetThumbnail("valid_path\\gen_image")
 
 	tests.ExpectNoError(err, t)
 
@@ -59,8 +61,8 @@ func TestGetThumbnailGenerate(t *testing.T) {
 		t.Errorf("Expected text '%s' but got %s", generatedImage, imageStr)
 	}
 
-	if imageSource.file != "gen_image" {
-		t.Errorf("Expected file valid_path\\gen_image but got %s", imageSource)
+	if imageSource.file != "gen_image.jpg" {
+		t.Errorf("Expected file gen_image.jpg but got %s", imageSource)
 	}
 }
 
@@ -68,7 +70,7 @@ func TestGetThumbnailAddFileError(t *testing.T) {
 	defaultError := errors.New("Error adding new file")
 	provider := thumbnailProvider{imageSource: &mockImageSource{defaultError: defaultError}}
 
-	_, err := provider.GetThumbnail("valid_path", "gen_image")
+	_, err := provider.GetThumbnail("valid_path\\gen_image")
 
 	tests.ExpectNoError(err, t)
 }
@@ -76,7 +78,7 @@ func TestGetThumbnailAddFileError(t *testing.T) {
 func TestGetThumbnailExisting(t *testing.T) {
 	provider := thumbnailProvider{imageSource: &mockImageSource{}}
 
-	thumbnail, err := provider.GetThumbnail("valid_path", "existing_image")
+	thumbnail, err := provider.GetThumbnail("valid_path\\existing_image")
 
 	tests.ExpectNoError(err, t)
 
@@ -89,7 +91,7 @@ func TestGetThumbnailExisting(t *testing.T) {
 func TestGetThumbnailDefault(t *testing.T) {
 	provider := thumbnailProvider{imageSource: &mockImageSource{}}
 
-	thumbnail, err := provider.GetThumbnail("valid_path", "gen_failed")
+	thumbnail, err := provider.GetThumbnail("valid_path\\gen_failed")
 
 	tests.ExpectNoError(err, t)
 
@@ -106,7 +108,7 @@ func TestGetThumbnailError(t *testing.T) {
 		},
 	}
 
-	_, err := provider.GetThumbnail("valid_path", "gen_failed")
+	_, err := provider.GetThumbnail("valid_path\\gen_failed")
 
 	tests.ExpectError(err, t)
 }

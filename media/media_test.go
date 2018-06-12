@@ -17,11 +17,10 @@ func (f sampleFiles) GetFiles(path string) ([]filesystem.File, error) {
 				filesystem.File{"movie.avi", false},
 				filesystem.File{"music.mp3", false}},
 			nil
-	case "MediaB":
+	case "C:\\MediaB":
 		return []filesystem.File{
-				filesystem.File{"movie.avi", false},
-				filesystem.File{"music.mp3", false},
-				filesystem.File{"more movies", true}},
+				filesystem.File{"movies\\movie.avi", false},
+				filesystem.File{"movies\\more movies", true}},
 			nil
 	}
 	return []filesystem.File{}, errors.New("unknown path")
@@ -46,31 +45,43 @@ func newMediaProvider() Provider {
 func TestGetLocalMedia(t *testing.T) {
 	provider := newMediaProvider()
 
-	files, err := provider.GetLocalMedia("MediaB")
+	files, err := provider.GetLocalMedia("C:\\", "MediaB")
 
 	tests.ExpectNoError(err, t)
 
-	if len(files) != 3 {
-		t.Errorf("Expected 3 files but got %d", len(files))
+	if len(files) != 2 {
+		t.Errorf("Expected 2 files but got %d", len(files))
 	}
 
 	if files[0].Name != "movie.avi" {
 		t.Errorf("Expected movie.avi but got %s", files[0].Name)
 	}
 
+	if files[0].URI != "MediaB\\movies\\movie.avi" {
+		t.Errorf("Expected MediaB\\movies\\movie.avi but got %s", files[0].URI)
+	}
+
 	if files[0].IsDirectory != false {
 		t.Error("Expected to be a file but got a directory")
 	}
 
-	if files[2].IsDirectory != true {
+	if files[1].Name != "more movies" {
+		t.Errorf("Expected more movies but got %s", files[1].Name)
+	}
+
+	if files[1].URI != "MediaB\\movies\\more movies" {
+		t.Errorf("Expected MediaB\\movies\\more movies but got %s", files[1].URI)
+	}
+
+	if files[1].IsDirectory != true {
 		t.Error("Expected to be a directory but got a file")
 	}
 }
 
-func TestGetLocalMediaError(t *testing.T) {
+func TestGetLocalMediaInvalidMediaPathError(t *testing.T) {
 	provider := newMediaProvider()
 
-	_, err := provider.GetLocalMedia("MediaC")
+	_, err := provider.GetLocalMedia("", "MediaC")
 
 	tests.ExpectError(err, t)
 }

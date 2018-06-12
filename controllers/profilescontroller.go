@@ -38,7 +38,7 @@ func (c ProfilesController) GetMedia(profileName, subPath string) (JSONResponse,
 		return JSONResponse{}, err
 	}
 
-	files, err := c.mediaProvider.GetLocalMedia(filepath.Join(profile.MediaPath, subPath))
+	files, err := c.mediaProvider.GetLocalMedia(profile.MediaPath, subPath)
 
 	if err != nil {
 		return JSONResponse{}, err
@@ -48,14 +48,14 @@ func (c ProfilesController) GetMedia(profileName, subPath string) (JSONResponse,
 }
 
 // GetMediaThumbnail returns a thumbnail representing the media
-func (c ProfilesController) GetMediaThumbnail(profileName, subPath, filename string) (BinaryResponse, error) {
+func (c ProfilesController) GetMediaThumbnail(profileName, filename string) (BinaryResponse, error) {
 	profile, err := c.profileProvider.GetProfile(profileName)
 
 	if err != nil {
 		return BinaryResponse{}, err
 	}
 
-	thumbnail, err := c.thumbnailProvider.GetThumbnail(filepath.Join(profile.MediaPath, subPath), filename)
+	thumbnail, err := c.thumbnailProvider.GetThumbnail(filepath.Join(profile.MediaPath, filename))
 
 	if err != nil {
 		return BinaryResponse{}, err

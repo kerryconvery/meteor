@@ -2,6 +2,7 @@ package thumbnails
 
 import (
 	"bytes"
+	"fmt"
 	"meteor/filesystem"
 	"os/exec"
 	"path/filepath"
@@ -27,7 +28,7 @@ type imageSource struct {
 
 // Provider represents a thumbnail provider
 type Provider interface {
-	GetThumbnail(path, filename string) (*bytes.Buffer, error)
+	GetThumbnail(filename string) (*bytes.Buffer, error)
 }
 
 type thumbnailProvider struct {
@@ -46,17 +47,19 @@ func New(thumbnailPath, defaultImagePath string, filesystem filesystem.Filesyste
 }
 
 // GetThumbnail returns a thumbnail for the supplied video file
-func (p thumbnailProvider) GetThumbnail(path, filename string) (*bytes.Buffer, error) {
-	existingImage, err := p.imageSource.getExistingThumbnail(filename)
+func (p thumbnailProvider) GetThumbnail(filename string) (*bytes.Buffer, error) {
+	thumbnailFile := fmt.Sprintf("%s.jpg", filepath.Base(filename))
+
+	existingImage, err := p.imageSource.getExistingThumbnail(thumbnailFile)
 
 	if err == nil {
 		return existingImage, nil
 	}
 
-	generatedImage, err := p.imageSource.generateVideoThumbnail(filepath.Join(path, filename))
+	generatedImage, err := p.imageSource.generateVideoThumbnail(filename)
 
 	if err == nil {
-		p.imageSource.addThumbnail(filename, generatedImage)
+		p.imageSource.addThumbnail(thumbnailFile, generatedImage)
 
 		return generatedImage, nil
 	}

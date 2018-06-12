@@ -71,7 +71,7 @@ func main() {
 	})
 
 	router.GET("/api/profiles/:profilename/media", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		path := r.URL.Query().Get("path")
+		path := r.URL.Query().Get("uri")
 
 		response, err := profileController.GetMedia(ps.ByName("profilename"), path)
 
@@ -82,11 +82,10 @@ func main() {
 		}
 	})
 
-	router.GET("/api/profiles/:profilename/media/:media/thumbnail", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	router.GET("/api/profiles/:profilename/media/thumbnail", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		response, err := profileController.GetMediaThumbnail(
 			ps.ByName("profilename"),
-			r.URL.Query().Get("path"),
-			ps.ByName("media"),
+			r.URL.Query().Get("uri"),
 		)
 
 		if err != nil {
