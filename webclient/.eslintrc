@@ -1,0 +1,125 @@
+{
+	"env": {
+		"es6": true,
+		"node": true,
+		"jest": true,
+		"browser": true
+	},
+	"extends": "airbnb",
+	"globals": {
+		"assert": true,
+		"$$": true,
+		"browser": true,
+		"before": true,
+		"after": true,
+		"expect": true,
+		"context": true
+	},
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"ecmaVersion": 2017,
+		"sourceType": "module"
+	},
+	"root": true,
+	"rules": {
+		"linebreak-style": 0,
+		"func-names": 0,
+		"import/prefer-default-export": 0,
+		"import/no-named-as-default": 0,
+		"import/no-named-as-default-member": 0,
+		"no-await-in-loop": 2,
+		"class-methods-use-this": 0,
+		"comma-dangle": [
+			"error",
+			{
+				"arrays": "always-multiline",
+				"objects": "always-multiline",
+				"imports": "never",
+				"exports": "never",
+				"functions": "ignore"
+			}
+		],
+		"global-require": "off",
+		"import/no-extraneous-dependencies": 0,
+		"indent": [
+			"error",
+			2,
+			{
+				"SwitchCase": 1
+			}
+		],
+		"no-restricted-syntax": 0,
+		"import/no-dynamic-require": 0,
+		"max-len": [
+			"error",
+			180,
+			{
+				"ignorePattern": "\\s*\\/\\^(.*)\\$\\/,$"
+			}
+		],
+		"new-cap": [
+			"error",
+			{
+				"newIsCap": true,
+				"capIsNewExceptions": [
+					"Given",
+					"When",
+					"Then",
+					"Before",
+					"After"
+				]
+			}
+		],
+		"require-jsdoc": [
+			"off",
+			{
+				"require": {
+					"FunctionDeclaration": true,
+					"MethodDefinition": true,
+					"ClassDeclaration": true
+				}
+			}
+		],
+		"strict": 1,
+		"valid-jsdoc": [
+			"error",
+			{
+				"requireReturn": false,
+				"matchDescription": ".+"
+			}
+		],
+		"react/jsx-filename-extension": 0,
+		"react/react-in-jsx-scope": 0,
+		"jsx-quotes": [
+			"error",
+			"prefer-single"
+		],
+		"react/prop-types": [
+			"error",
+			{
+				"ignore": [
+					"children"
+				]
+			}
+		],
+		"no-return-await": 2,
+		"require-await": 2,
+		"no-param-reassign": [
+			"error",
+			{
+				"props": true,
+				"ignorePropertyModificationsFor": [
+					"config"
+				]
+			}
+		],
+		"no-plusplus": 0,
+		"object-curly-newline" : [
+			"error",
+			{
+				"ObjectExpression" : {"consistent": true},
+				"ObjectPattern" : {"minProperties": 6}
+			}
+		]
+	}
+}

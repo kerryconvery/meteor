@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"meteor/configuration"
 	"meteor/controllers"
@@ -56,9 +57,21 @@ func main() {
 
 	router := httprouter.New()
 
-	router.GET("/", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		fmt.Fprint(w, "Welcome")
+	router.GET("/", func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		//Parse the html file
+		index := template.Must(template.ParseFiles("webclient/dist/index.html"))
+
+		index.Execute(rw, nil)
 	})
+
+	router.GET("/media", func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		//Parse the html file
+		index := template.Must(template.ParseFiles("webclient/dist/index.html"))
+
+		index.Execute(rw, nil)
+	})
+
+	router.ServeFiles("/webclient/*filepath", http.Dir("webclient"))
 
 	router.GET("/api/profiles", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		response, err := profileController.GetAll()

@@ -8,7 +8,7 @@ import (
 // Media represents a file based media
 type Media struct {
 	Name        string `json:"name"`
-	URI         string `json:"URI"`
+	URI         string `json:"uri"`
 	IsDirectory bool   `json:"isDirectory"`
 	Thumbnail   string `json:"thumbnail"`
 }
