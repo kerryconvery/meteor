@@ -1,29 +1,31 @@
+const path = require('path');
+
 module.exports = {
-    entry: [
-      './src/index.js'
+  entry: [
+    './src/index.js',
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
-    module: {
-        rules: [
-            {
-                test: /\.(js)$/,
-                exclude: /node_modules/,
-                use: ['babel-loader'],
-            },
-            {
-                test: /\.css$/,
-                use: [ 'style-loader', 'css-loader' ]
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['*', '.js']
-    },
-    output: {
-        path: __dirname + '/dist',
-        publicPath: '/',
-        filename: 'bundle.js'
-    },
-    devServer: {
-        contentBase: './dist'
-    }
-  };
+  },
+  resolve: {
+    extensions: ['*', '.js'],
+  },
+  output: {
+    path: path.join(__dirname, '/dist'),
+    publicPath: '/',
+    filename: 'bundle.js',
+  },
+  devServer: {
+    contentBase: './dist',
+  },
+};
