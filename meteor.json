@@ -14,5 +14,6 @@
             ],
             "apiUrl": "http://localhost:13579"
         }
-    ]
+    ],
+    "listenPort": 8080
 }

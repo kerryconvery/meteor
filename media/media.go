@@ -10,7 +10,6 @@ type Media struct {
 	Name        string `json:"name"`
 	URI         string `json:"uri"`
 	IsDirectory bool   `json:"isDirectory"`
-	Thumbnail   string `json:"thumbnail"`
 }
 
 type fileSource interface {

@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import queryString from 'query-string';
+import { getMedia, launchMedia } from '../mediaServices';
 import MediaList from '../../components/media/mediaList';
 
-export default class Media extends React.Component {
+class MediaView extends React.Component {
   state = {
     profile: '',
     media: [],
@@ -21,32 +21,27 @@ export default class Media extends React.Component {
   }
 
   onItemClicked = item => (
-    item.isDirectory ?
-      this.navigateFolder(this.state.profile, item.uri) :
-      this.launchMedia(this.state.profile, item.uri));
+    item.isDirectory ? this.navigateFolder(this.state.profile, item.uri) : launchMedia(this.state.profile, item.uri)
+  );
 
   navigateFolder = (profile, uri) => this.props.history.push(`/media?${queryString.stringify({ profile, uri })}`);
-  launchMedia = (profile, uri) => axios({ method: 'POST', url: `/api/media?profile=${profile}&uri=${uri}` })
 
   loadMedia = (props) => {
     const params = new URLSearchParams(props.location.search);
     const profile = params.get('profile');
     const uri = params.get('uri');
 
-    axios({ method: 'GET', url: `/api/profiles/${profile}/media${uri ? `?uri=${uri}` : ''}` })
-      .then(res => this.setState({ profile: params.get('profile'), media: res.data }));
+    getMedia(profile, uri).then(media => this.setState({ profile, media }));
   }
 
-  render() {
-    return (
-      <MediaList items={this.state.media} profile={this.state.profile} onItemClicked={this.onItemClicked} />
-    );
-  }
+  render = () => <MediaList items={this.state.media} profile={this.state.profile} onItemClicked={this.onItemClicked} />
 }
 
-Media.propTypes = {
+MediaView.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string,
   }).isRequired,
   history: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
+
+export default MediaView;

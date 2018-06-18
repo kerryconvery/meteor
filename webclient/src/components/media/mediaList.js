@@ -3,16 +3,14 @@ import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 
 const mediaItem = (profile, onClick) => item => (
-  <ListGroup>
-    <ListGroupItem key={item.name} tag='button' action onClick={() => onClick(item)}>
-      <img src={`/api/profiles/${profile}/media/thumbnail?uri=${item.uri}`} alt='' />
-      {item.name}
-    </ListGroupItem>
-  </ListGroup>
+  <ListGroupItem key={item.name} tag='button' action onClick={() => onClick(item)}>
+    <img src={`/api/profiles/${profile}/media/thumbnail?uri=${item.uri}`} alt='' />
+    {item.name}
+  </ListGroupItem>
 );
 
 const MediaList = props => (
-  <ul>{props.items.map(mediaItem(props.profile, props.onItemClicked))}</ul>
+  <ListGroup>{props.items.map(mediaItem(props.profile, props.onItemClicked))}</ListGroup>
 );
 
 MediaList.propTypes = {

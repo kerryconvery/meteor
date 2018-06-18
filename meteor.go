@@ -42,7 +42,12 @@ func handleError(writer http.ResponseWriter, err error) {
 
 func main() {
 	filesystem := filesystem.New()
-	config, _ := configuration.GetConfiguration("./", "meteor.json", filesystem)
+	config, err := configuration.GetConfiguration("./", "meteor.json", filesystem)
+
+	if err != nil {
+		panic(err)
+	}
+
 	profileProvider := profiles.New(config.ProfilePath)
 	thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
@@ -142,5 +147,5 @@ func main() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.ListenPort), router))
 }
