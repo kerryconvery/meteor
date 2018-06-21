@@ -65,7 +65,7 @@ describe('MediaView', () => {
       expect(wrapper.state().media).toEqual(media);
     });
 
-    it('should add an empty meda set to the state getMedia throws an error', async () => {
+    it('should put an empty media set on the state getMedia throws an error', async () => {
       const params = { profile: 'profile1', uri: '/folder1/folder2' };
       Services.getMedia.mockRejectedValue({});
       const wrapper = mountComponent();

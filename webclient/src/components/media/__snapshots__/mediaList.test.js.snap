@@ -1,0 +1,250 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a list of media 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <MediaList
+    items={
+      Array [
+        Object {
+          "isDirector": false,
+          "name": "media1",
+          "uri": "",
+        },
+        Object {
+          "isDirector": true,
+          "name": "media2",
+          "uri": "",
+        },
+      ]
+    }
+    onItemClicked={[Function]}
+    profile="profile1"
+  />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "function",
+    "props": Object {
+      "children": Array [
+        <ListGroupItem
+          action={true}
+          onClick={[Function]}
+          tag="button"
+        >
+          <img
+            alt=""
+            src="/api/profiles/profile1/media/thumbnail?uri="
+          />
+          media1
+        </ListGroupItem>,
+        <ListGroupItem
+          action={true}
+          onClick={[Function]}
+          tag="button"
+        >
+          <img
+            alt=""
+            src="/api/profiles/profile1/media/thumbnail?uri="
+          />
+          media2
+        </ListGroupItem>,
+      ],
+      "tag": "ul",
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": "media1",
+        "nodeType": "function",
+        "props": Object {
+          "action": true,
+          "children": Array [
+            <img
+              alt=""
+              src="/api/profiles/profile1/media/thumbnail?uri="
+            />,
+            "media1",
+          ],
+          "onClick": [Function],
+          "tag": "button",
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "alt": "",
+              "src": "/api/profiles/profile1/media/thumbnail?uri=",
+            },
+            "ref": null,
+            "rendered": null,
+            "type": "img",
+          },
+          "media1",
+        ],
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": "media2",
+        "nodeType": "function",
+        "props": Object {
+          "action": true,
+          "children": Array [
+            <img
+              alt=""
+              src="/api/profiles/profile1/media/thumbnail?uri="
+            />,
+            "media2",
+          ],
+          "onClick": [Function],
+          "tag": "button",
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "alt": "",
+              "src": "/api/profiles/profile1/media/thumbnail?uri=",
+            },
+            "ref": null,
+            "rendered": null,
+            "type": "img",
+          },
+          "media2",
+        ],
+        "type": [Function],
+      },
+    ],
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "function",
+      "props": Object {
+        "children": Array [
+          <ListGroupItem
+            action={true}
+            onClick={[Function]}
+            tag="button"
+          >
+            <img
+              alt=""
+              src="/api/profiles/profile1/media/thumbnail?uri="
+            />
+            media1
+          </ListGroupItem>,
+          <ListGroupItem
+            action={true}
+            onClick={[Function]}
+            tag="button"
+          >
+            <img
+              alt=""
+              src="/api/profiles/profile1/media/thumbnail?uri="
+            />
+            media2
+          </ListGroupItem>,
+        ],
+        "tag": "ul",
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": "media1",
+          "nodeType": "function",
+          "props": Object {
+            "action": true,
+            "children": Array [
+              <img
+                alt=""
+                src="/api/profiles/profile1/media/thumbnail?uri="
+              />,
+              "media1",
+            ],
+            "onClick": [Function],
+            "tag": "button",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "alt": "",
+                "src": "/api/profiles/profile1/media/thumbnail?uri=",
+              },
+              "ref": null,
+              "rendered": null,
+              "type": "img",
+            },
+            "media1",
+          ],
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": "media2",
+          "nodeType": "function",
+          "props": Object {
+            "action": true,
+            "children": Array [
+              <img
+                alt=""
+                src="/api/profiles/profile1/media/thumbnail?uri="
+              />,
+              "media2",
+            ],
+            "onClick": [Function],
+            "tag": "button",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "alt": "",
+                "src": "/api/profiles/profile1/media/thumbnail?uri=",
+              },
+              "ref": null,
+              "rendered": null,
+              "type": "img",
+            },
+            "media2",
+          ],
+          "type": [Function],
+        },
+      ],
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+  },
+}
+`;

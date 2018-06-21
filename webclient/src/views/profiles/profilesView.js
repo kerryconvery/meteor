@@ -8,7 +8,12 @@ class ProfilesView extends React.Component {
   }
 
   componentDidMount() {
-    getProfiles().then(profiles => this.setState({ profiles }));
+    this.loadProfiles();
+  }
+
+  loadProfiles = async () => {
+    const profiles = await getProfiles().catch(() => []);
+    this.setState({ profiles });
   }
 
   render = () => <ProfileList items={this.state.profiles} />;
