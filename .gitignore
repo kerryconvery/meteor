@@ -1,3 +1,6 @@
 meteor.exe
-webclient/node_modules
 assets/thumbnails
+webclient/node_modules
+webclient/coverage
+webclient/dist/bundle.*
+

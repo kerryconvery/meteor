@@ -11,30 +11,37 @@ class MediaView extends React.Component {
   }
 
   componentDidMount() {
-    this.loadMedia(this.props);
+    this.loadMedia(queryString.parse(this.props.location.search));
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.search !== this.props.location.search) {
-      this.loadMedia(nextProps);
+      this.loadMedia(queryString.parse(nextProps.location.search));
     }
   }
 
   onItemClicked = item => (
-    item.isDirectory ? this.navigateFolder(this.state.profile, item.uri) : launchMedia(this.state.profile, item.uri)
+    item.isDirectory ?
+      this.navigateFolder(this.state.profile, item.uri) :
+      launchMedia(this.state.profile, item.uri)
   );
 
-  navigateFolder = (profile, uri) => this.props.history.push(`/media?${queryString.stringify({ profile, uri })}`);
+  navigateFolder = (profile, uri) => {
+    this.props.history.push(`/media?${queryString.stringify({ profile, uri })}`);
+  };
 
-  loadMedia = (props) => {
-    const params = new URLSearchParams(props.location.search);
-    const profile = params.get('profile');
-    const uri = params.get('uri');
-
-    getMedia(profile, uri).then(media => this.setState({ profile, media }));
+  loadMedia = async (params) => {
+    const media = await getMedia(params.profile, params.uri).catch(() => []);
+    this.setState({ profile: params.profile, media });
   }
 
-  render = () => <MediaList items={this.state.media} profile={this.state.profile} onItemClicked={this.onItemClicked} />
+  render = () => (
+    <MediaList
+      items={this.state.media}
+      profile={this.state.profile}
+      onItemClicked={this.onItemClicked}
+    />
+  );
 }
 
 MediaView.propTypes = {
