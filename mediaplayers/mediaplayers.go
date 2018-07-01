@@ -6,7 +6,16 @@ import (
 	"net/url"
 	"os/exec"
 	"strings"
+
+	"github.com/antchfx/htmlquery"
+	"golang.org/x/net/html"
 )
+
+type MediaPlayerInfo struct {
+	NowPlaying string `json:"nowPlaying"`
+	State      string `json:"state"`
+	Position   string `json:"position"`
+}
 
 // MediaPlayer represents a media player
 type MediaPlayer interface {
@@ -14,6 +23,7 @@ type MediaPlayer interface {
 	Exit() error
 	Pause() error
 	Resume() error
+	GetInfo() (MediaPlayerInfo, error)
 }
 
 type mediaPlayerClassic struct {
@@ -74,4 +84,27 @@ func (m mediaPlayerClassic) Pause() error {
 
 func (m mediaPlayerClassic) Resume() error {
 	return m.sendCommand("887")
+}
+
+func (m mediaPlayerClassic) GetInfo() (MediaPlayerInfo, error) {
+	doc, err := htmlquery.LoadURL(fmt.Sprintf("%s/variables.html", m.apiURL))
+
+	if err != nil {
+		return MediaPlayerInfo{}, err
+	}
+
+	return m.readVariables(doc), nil
+}
+
+func (m mediaPlayerClassic) readVariables(doc *html.Node) MediaPlayerInfo {
+	return MediaPlayerInfo{
+		NowPlaying: m.readVariable(doc, "filepath"),
+		Position:   m.readVariable(doc, "position"),
+		State:      m.readVariable(doc, "state"),
+	}
+}
+
+func (m mediaPlayerClassic) readVariable(doc *html.Node, id string) string {
+	node := htmlquery.FindOne(doc, fmt.Sprintf("//p[@id='%s']", id))
+	return htmlquery.InnerText(node)
 }

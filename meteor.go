@@ -7,6 +7,7 @@ import (
 	"log"
 	"meteor/configuration"
 	"meteor/controllers"
+	"meteor/controllers/webhook"
 	"meteor/filesystem"
 	"meteor/media"
 	"meteor/mediaplayers"
@@ -40,6 +41,13 @@ func handleError(writer http.ResponseWriter, err error) {
 	fmt.Fprint(writer, err.Error())
 }
 
+func serveUI(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	//Parse the html file
+	index := template.Must(template.ParseFiles("webclient/dist/index.html"))
+
+	index.Execute(rw, nil)
+}
+
 func main() {
 	filesystem := filesystem.New()
 	config, err := configuration.GetConfiguration("./", "meteor.json", filesystem)
@@ -51,6 +59,7 @@ func main() {
 	profileProvider := profiles.New(config.ProfilePath)
 	thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
+	webhook := webhook.New()
 	mediaController := controllers.NewMediaController(
 		profileProvider,
 		mediaplayers.New(
@@ -58,25 +67,21 @@ func main() {
 			config.MediaPlayers[0].LaunchArgs,
 			config.MediaPlayers[0].APIUrl,
 		),
+		webhook,
 	)
+
+	webhook.Start()
+	// defer webhook.Stop()
 
 	router := httprouter.New()
 
-	router.GET("/", func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		//Parse the html file
-		index := template.Must(template.ParseFiles("webclient/dist/index.html"))
-
-		index.Execute(rw, nil)
-	})
-
-	router.GET("/media", func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		//Parse the html file
-		index := template.Must(template.ParseFiles("webclient/dist/index.html"))
-
-		index.Execute(rw, nil)
-	})
-
+	router.GET("/", serveUI)
+	router.GET("/media", serveUI)
 	router.ServeFiles("/webclient/*filepath", http.Dir("webclient"))
+
+	router.GET("/ws", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		webhook.AddClient(w, r)
+	})
 
 	router.GET("/api/profiles", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		response, err := profileController.GetAll()
