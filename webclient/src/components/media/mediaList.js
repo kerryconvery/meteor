@@ -5,7 +5,7 @@ import { ListGroup, ListGroupItem } from 'reactstrap';
 const mediaItem = (profile, onClick) => item => (
   <ListGroupItem key={item.name} tag='button' action onClick={() => onClick(item)}>
     <img src={`/api/profiles/${profile}/media/thumbnail?uri=${item.uri}`} alt='' />
-    {item.name}
+    <span style={{ marginLeft: '5px' }}>{item.name}</span>
   </ListGroupItem>
 );
 

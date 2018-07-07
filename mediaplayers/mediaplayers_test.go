@@ -33,7 +33,7 @@ func TestSplitArguments(t *testing.T) {
 }
 
 func TestReadVariables(t *testing.T) {
-	html := "<p id='filepath'>movie.avi</p><p id='position'>100</p><p id='state'>1</p>"
+	html := "<p id='filepath'>c:\\movies\\movie.avi</p><p id='position'>100</p><p id='duration'>1000</p><p id='state'>1</p>"
 
 	mediaPlayer := mediaPlayerClassic{}
 
@@ -49,11 +49,15 @@ func TestReadVariables(t *testing.T) {
 		t.Errorf("Expected movie.avi but got %s", info.NowPlaying)
 	}
 
-	if info.Position != "100" {
-		t.Errorf("Expected 100 but got %s", info.Position)
+	if info.Position != 100 {
+		t.Errorf("Expected 100 but got %d", info.Position)
 	}
 
-	if info.State != "1" {
-		t.Errorf("Expected 1 but got %s", info.State)
+	if info.Duration != 1000 {
+		t.Errorf("Expected 1000 but got %d", info.Duration)
+	}
+
+	if info.State != 1 {
+		t.Errorf("Expected 1 but got %d", info.State)
 	}
 }

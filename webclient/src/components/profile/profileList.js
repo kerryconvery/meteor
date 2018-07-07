@@ -1,21 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import { Button, ButtonGroup } from 'reactstrap';
 
-const profileItem = item => (
-  <li key={item.name}>
-    <NavLink exact to={`/media?profile=${item.name}`}>{item.name}</NavLink>
-  </li>
+const profileItem = onClick => item => (
+  <Button outline color='primary' onClick={() => onClick(item)}>{item.name}</Button>
 );
 
 const ProfileList = props => (
-  <ul>{props.items.map(profileItem)}</ul>
+  <ButtonGroup className='d-flex justify-content-md-center' vertical>{props.items.map(profileItem(props.onClick))}</ButtonGroup>
 );
 
 ProfileList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
   })).isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ProfileList;

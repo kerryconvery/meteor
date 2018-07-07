@@ -3,12 +3,20 @@ package controllers
 import (
 	"errors"
 	"fmt"
+	"meteor/mediaplayers"
 	"meteor/profiles"
 	"meteor/tests"
 	"testing"
 )
 
 type profilesProvider struct {
+}
+
+type mockBroadcaster struct {
+}
+
+func (m mockBroadcaster) Broadcast(payload interface{}) {
+
 }
 
 func (p profilesProvider) GetProfile(profileName string) (profiles.Profile, error) {
@@ -40,8 +48,12 @@ func (m mockMediaPlayer) Resume() error {
 	return nil
 }
 
+func (m mockMediaPlayer) GetInfo() (mediaplayers.MediaPlayerInfo, error) {
+	return mediaplayers.MediaPlayerInfo{}, nil
+}
+
 func GetMediaController() MediaController {
-	return NewMediaController(profilesProvider{}, mockMediaPlayer{})
+	return NewMediaController(profilesProvider{}, mockMediaPlayer{}, mockBroadcaster{})
 }
 func TestLaunchMediaFile(t *testing.T) {
 	controller := GetMediaController()

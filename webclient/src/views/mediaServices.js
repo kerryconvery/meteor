@@ -8,6 +8,6 @@ export const stop = () => axios.delete('api/media');
 export const resume = () => axios.post('api/media/resume');
 export const listen = (listener) => {
   const ws = new WebSocket(`ws://${window.location.host}/ws`);
-  ws.addEventListener('message', event => listener(event.data));
+  ws.addEventListener('message', event => listener(JSON.parse(event.data)));
   return ws;
 };

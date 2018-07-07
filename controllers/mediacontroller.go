@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"meteor/controllers/webhook"
 	"meteor/mediaplayers"
 	"meteor/profiles"
 	"path/filepath"
@@ -10,34 +9,34 @@ import (
 type profileSource interface {
 	GetProfile(profileName string) (profiles.Profile, error)
 }
+type broadcaster interface {
+	Broadcast(payload interface{})
+}
 
 // MediaController represents a controller of a media player
 type MediaController struct {
 	Controller
+	broadcaster      broadcaster
 	profilesProvider profileSource
 	mediaPlayer      mediaplayers.MediaPlayer
-	webhook          webhook.Webhook
 }
 
 // NewMediaController returns a new instance of the media controller
-func NewMediaController(profilesProvider profileSource, mediaPlayer mediaplayers.MediaPlayer, webhook webhook.Webhook) MediaController {
-	return MediaController{profilesProvider: profilesProvider, mediaPlayer: mediaPlayer, webhook: webhook}
+func NewMediaController(profilesProvider profileSource, mediaPlayer mediaplayers.MediaPlayer, broadcaster broadcaster) MediaController {
+	controller := MediaController{profilesProvider: profilesProvider, mediaPlayer: mediaPlayer, broadcaster: broadcaster}
+	go controller.watchMediaPlayer()
+	return controller
 }
 
-func (c MediaController) startReporting() {
-	go watchMediaPlayer(c.webhook, c.mediaPlayer)
-}
-
-func watchMediaPlayer(webhook webhook.Webhook, mediaPlayer mediaplayers.MediaPlayer) {
+func (c MediaController) watchMediaPlayer() {
 	for {
-		info, err := mediaPlayer.GetInfo()
+		info, err := c.mediaPlayer.GetInfo()
 
 		if err != nil {
-			webhook.Broadcast("", "", "0")
-			return
+			c.broadcaster.Broadcast(mediaplayers.MediaPlayerInfo{Position: 0, Duration: 0, State: 0})
 		}
 
-		webhook.Broadcast(info.NowPlaying, info.Position, info.State)
+		c.broadcaster.Broadcast(info)
 	}
 }
 
@@ -50,8 +49,6 @@ func (c MediaController) LaunchMediaFile(profileName, mediafile string) (TextRes
 	}
 
 	playerErr := c.mediaPlayer.Play(filepath.Join(profile.MediaPath, mediafile), profile.MediaArgs)
-
-	c.startReporting()
 
 	return c.TextResponse(201, ""), playerErr
 }

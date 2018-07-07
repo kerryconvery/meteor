@@ -7,12 +7,12 @@ import (
 	"log"
 	"meteor/configuration"
 	"meteor/controllers"
-	"meteor/controllers/webhook"
 	"meteor/filesystem"
 	"meteor/media"
 	"meteor/mediaplayers"
 	"meteor/profiles"
 	"meteor/thumbnails"
+	"meteor/webhook"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -67,7 +67,7 @@ func main() {
 			config.MediaPlayers[0].LaunchArgs,
 			config.MediaPlayers[0].APIUrl,
 		),
-		webhook,
+		&webhook,
 	)
 
 	webhook.Start()

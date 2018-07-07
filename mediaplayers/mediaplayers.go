@@ -5,16 +5,20 @@ import (
 	"net/http"
 	"net/url"
 	"os/exec"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/antchfx/htmlquery"
 	"golang.org/x/net/html"
 )
 
+// MediaPlayerInfo represents the state of the media player
 type MediaPlayerInfo struct {
 	NowPlaying string `json:"nowPlaying"`
-	State      string `json:"state"`
-	Position   string `json:"position"`
+	State      int    `json:"state"`
+	Position   int    `json:"position"`
+	Duration   int    `json:"duration"`
 }
 
 // MediaPlayer represents a media player
@@ -96,11 +100,27 @@ func (m mediaPlayerClassic) GetInfo() (MediaPlayerInfo, error) {
 	return m.readVariables(doc), nil
 }
 
+func (m mediaPlayerClassic) getFilename(doc *html.Node) string {
+	_, file := filepath.Split(m.readVariable(doc, "filepath"))
+	return file
+}
+
+func (m mediaPlayerClassic) getIntField(doc *html.Node, field string) int {
+	value, err := strconv.Atoi(m.readVariable(doc, field))
+
+	if err != nil {
+		return 0
+	}
+
+	return value
+}
+
 func (m mediaPlayerClassic) readVariables(doc *html.Node) MediaPlayerInfo {
 	return MediaPlayerInfo{
-		NowPlaying: m.readVariable(doc, "filepath"),
-		Position:   m.readVariable(doc, "position"),
-		State:      m.readVariable(doc, "state"),
+		NowPlaying: m.getFilename(doc),
+		Position:   m.getIntField(doc, "position"),
+		Duration:   m.getIntField(doc, "duration"),
+		State:      m.getIntField(doc, "state"),
 	}
 }
 

@@ -6,16 +6,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type message struct {
-	NowPlaying string `json:"nowPlaying"`
-	Position   string `json:"position"`
-	State      string `json:"state"`
-}
-
 // Webhook represents a webhook
 type Webhook struct {
 	clients  map[*websocket.Conn]bool
-	messages chan message
+	messages chan interface{}
 	upgrader websocket.Upgrader
 }
 
@@ -23,7 +17,7 @@ type Webhook struct {
 func New() Webhook {
 	return Webhook{
 		clients:  make(map[*websocket.Conn]bool),
-		messages: make(chan message, 100),
+		messages: make(chan interface{}, 100),
 		upgrader: websocket.Upgrader{},
 	}
 }
@@ -44,8 +38,8 @@ func (wh *Webhook) AddClient(w http.ResponseWriter, r *http.Request) error {
 }
 
 // Broadcast adds a message into the queue to be sent to all connected clients
-func (wh *Webhook) Broadcast(nowPlaying, position, state string) {
-	wh.messages <- message{nowPlaying, position, state}
+func (wh *Webhook) Broadcast(payload interface{}) {
+	wh.messages <- payload
 }
 
 // Start processing messages
@@ -58,7 +52,7 @@ func (wh *Webhook) Stop() {
 	close(wh.messages)
 }
 
-func processQueue(clients map[*websocket.Conn]bool, messages chan message) {
+func processQueue(clients map[*websocket.Conn]bool, messages chan interface{}) {
 	for message := range messages {
 		for client := range clients {
 			err := client.WriteJSON(message)
