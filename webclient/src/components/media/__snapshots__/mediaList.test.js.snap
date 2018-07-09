@@ -44,7 +44,15 @@ ShallowWrapper {
             alt=""
             src="/api/profiles/profile1/media/thumbnail?uri="
           />
-          media1
+          <span
+            style={
+              Object {
+                "marginLeft": "5px",
+              }
+            }
+          >
+            media1
+          </span>
         </ListGroupItem>,
         <ListGroupItem
           action={true}
@@ -55,7 +63,15 @@ ShallowWrapper {
             alt=""
             src="/api/profiles/profile1/media/thumbnail?uri="
           />
-          media2
+          <span
+            style={
+              Object {
+                "marginLeft": "5px",
+              }
+            }
+          >
+            media2
+          </span>
         </ListGroupItem>,
       ],
       "tag": "ul",
@@ -73,7 +89,15 @@ ShallowWrapper {
               alt=""
               src="/api/profiles/profile1/media/thumbnail?uri="
             />,
-            "media1",
+            <span
+              style={
+                Object {
+                  "marginLeft": "5px",
+                }
+              }
+            >
+              media1
+            </span>,
           ],
           "onClick": [Function],
           "tag": "button",
@@ -92,7 +116,20 @@ ShallowWrapper {
             "rendered": null,
             "type": "img",
           },
-          "media1",
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "media1",
+              "style": Object {
+                "marginLeft": "5px",
+              },
+            },
+            "ref": null,
+            "rendered": "media1",
+            "type": "span",
+          },
         ],
         "type": [Function],
       },
@@ -107,7 +144,15 @@ ShallowWrapper {
               alt=""
               src="/api/profiles/profile1/media/thumbnail?uri="
             />,
-            "media2",
+            <span
+              style={
+                Object {
+                  "marginLeft": "5px",
+                }
+              }
+            >
+              media2
+            </span>,
           ],
           "onClick": [Function],
           "tag": "button",
@@ -126,7 +171,20 @@ ShallowWrapper {
             "rendered": null,
             "type": "img",
           },
-          "media2",
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "media2",
+              "style": Object {
+                "marginLeft": "5px",
+              },
+            },
+            "ref": null,
+            "rendered": "media2",
+            "type": "span",
+          },
         ],
         "type": [Function],
       },
@@ -149,7 +207,15 @@ ShallowWrapper {
               alt=""
               src="/api/profiles/profile1/media/thumbnail?uri="
             />
-            media1
+            <span
+              style={
+                Object {
+                  "marginLeft": "5px",
+                }
+              }
+            >
+              media1
+            </span>
           </ListGroupItem>,
           <ListGroupItem
             action={true}
@@ -160,7 +226,15 @@ ShallowWrapper {
               alt=""
               src="/api/profiles/profile1/media/thumbnail?uri="
             />
-            media2
+            <span
+              style={
+                Object {
+                  "marginLeft": "5px",
+                }
+              }
+            >
+              media2
+            </span>
           </ListGroupItem>,
         ],
         "tag": "ul",
@@ -178,7 +252,15 @@ ShallowWrapper {
                 alt=""
                 src="/api/profiles/profile1/media/thumbnail?uri="
               />,
-              "media1",
+              <span
+                style={
+                  Object {
+                    "marginLeft": "5px",
+                  }
+                }
+              >
+                media1
+              </span>,
             ],
             "onClick": [Function],
             "tag": "button",
@@ -197,7 +279,20 @@ ShallowWrapper {
               "rendered": null,
               "type": "img",
             },
-            "media1",
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "media1",
+                "style": Object {
+                  "marginLeft": "5px",
+                },
+              },
+              "ref": null,
+              "rendered": "media1",
+              "type": "span",
+            },
           ],
           "type": [Function],
         },
@@ -212,7 +307,15 @@ ShallowWrapper {
                 alt=""
                 src="/api/profiles/profile1/media/thumbnail?uri="
               />,
-              "media2",
+              <span
+                style={
+                  Object {
+                    "marginLeft": "5px",
+                  }
+                }
+              >
+                media2
+              </span>,
             ],
             "onClick": [Function],
             "tag": "button",
@@ -231,7 +334,20 @@ ShallowWrapper {
               "rendered": null,
               "type": "img",
             },
-            "media2",
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "media2",
+                "style": Object {
+                  "marginLeft": "5px",
+                },
+              },
+              "ref": null,
+              "rendered": "media2",
+              "type": "span",
+            },
           ],
           "type": [Function],
         },

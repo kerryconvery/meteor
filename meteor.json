@@ -2,6 +2,7 @@
     "profilePath": "C:\\Source\\mpc-mate\\middleware\\profiles",
     "assetPath": "./assets",
     "thumbnailPath": "./assets/thumbnails",
+    "webclientPath": "./webclient/dist",
     "mediaplayers": [
         {
             "id": "mpc",
@@ -15,5 +16,5 @@
             "apiUrl": "http://localhost:13579"
         }
     ],
-    "listenPort": 8080
+    "listenPort": 80
 }

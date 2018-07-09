@@ -22,7 +22,11 @@ class ProfilesView extends React.Component {
     this.setState({ profiles });
   }
 
-  render = () => <ProfileList items={this.state.profiles} onClick={this.onProfileClick} />;
+  render = () => (
+    <div style={{ margin: '10px' }}>
+      <ProfileList items={this.state.profiles} onClick={this.onProfileClick} />
+    </div>
+  )
 }
 
 ProfilesView.propTypes = {

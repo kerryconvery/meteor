@@ -17,6 +17,7 @@ type Configuration struct {
 	ProfilePath   string                     `json:"profilePath"`
 	ThumbnailPath string                     `json:"thumbnailPath"`
 	AssetPath     string                     `json:"assetPath"`
+	WebClientPath string                     `json:"webclientPath"`
 	MediaPlayers  []MediaPlayerConfiguration `json:"mediaplayers"`
 	ListenPort    int                        `json:"listenPort"`
 }

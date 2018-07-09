@@ -1,4 +1,9 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+const ROOT_DIR = path.resolve(__dirname, './');
+const DIST_DIR = path.resolve(ROOT_DIR, 'dist');
 
 module.exports = {
   entry: [
@@ -21,11 +26,12 @@ module.exports = {
     extensions: ['*', '.js'],
   },
   output: {
-    path: path.join(__dirname, '/dist'),
-    publicPath: '/',
-    filename: 'bundle.js',
+    path: DIST_DIR,
+    filename: 'index.js',
   },
-  devServer: {
-    contentBase: './dist',
-  },
+  plugins: [
+    new CleanWebpackPlugin(['dist'], { root: ROOT_DIR }),
+    new CopyWebpackPlugin(['src/index.html', 'assets/**/*']),
+  ],
+  mode: 'production',
 };

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from 'reactstrap';
 
 const profileItem = onClick => item => (
-  <Button outline color='primary' onClick={() => onClick(item)}>{item.name}</Button>
+  <Button key={item.name} outline color='primary' onClick={() => onClick(item)}>{item.name}</Button>
 );
 
 const ProfileList = props => (

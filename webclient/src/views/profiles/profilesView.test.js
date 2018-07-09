@@ -6,8 +6,12 @@ import * as Services from '../mediaServices';
 jest.mock('../mediaServices');
 
 describe('ProfilesView', () => {
+  const props = {
+    history: [],
+  };
+
   const mountComponent = () => (
-    shallow(<ProfilesView />, { disableLifecycleMethods: true })
+    shallow(<ProfilesView {...props} />, { disableLifecycleMethods: true })
   );
 
   afterEach(() => {

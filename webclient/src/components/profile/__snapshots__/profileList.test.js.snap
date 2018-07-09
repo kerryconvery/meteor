@@ -15,6 +15,7 @@ ShallowWrapper {
         },
       ]
     }
+    onClick={[Function]}
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
@@ -26,197 +27,129 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "host",
+    "nodeType": "function",
     "props": Object {
       "children": Array [
-        <li>
-          <NavLink
-            activeClassName="active"
-            aria-current="page"
-            exact={true}
-            to="/media?profile=profile1"
-          >
-            profile1
-          </NavLink>
-        </li>,
-        <li>
-          <NavLink
-            activeClassName="active"
-            aria-current="page"
-            exact={true}
-            to="/media?profile=profile2"
-          >
-            profile2
-          </NavLink>
-        </li>,
+        <Button
+          color="primary"
+          onClick={[Function]}
+          outline={true}
+          tag="button"
+        >
+          profile1
+        </Button>,
+        <Button
+          color="primary"
+          onClick={[Function]}
+          outline={true}
+          tag="button"
+        >
+          profile2
+        </Button>,
       ],
+      "className": "d-flex justify-content-md-center",
+      "role": "group",
+      "tag": "div",
+      "vertical": true,
     },
     "ref": null,
     "rendered": Array [
       Object {
         "instance": null,
         "key": "profile1",
-        "nodeType": "host",
+        "nodeType": "class",
         "props": Object {
-          "children": <NavLink
-            activeClassName="active"
-            aria-current="page"
-            exact={true}
-            to="/media?profile=profile1"
-          >
-            profile1
-          </NavLink>,
+          "children": "profile1",
+          "color": "primary",
+          "onClick": [Function],
+          "outline": true,
+          "tag": "button",
         },
         "ref": null,
-        "rendered": Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "function",
-          "props": Object {
-            "activeClassName": "active",
-            "aria-current": "page",
-            "children": "profile1",
-            "exact": true,
-            "to": "/media?profile=profile1",
-          },
-          "ref": null,
-          "rendered": "profile1",
-          "type": [Function],
-        },
-        "type": "li",
+        "rendered": "profile1",
+        "type": [Function],
       },
       Object {
         "instance": null,
         "key": "profile2",
-        "nodeType": "host",
+        "nodeType": "class",
         "props": Object {
-          "children": <NavLink
-            activeClassName="active"
-            aria-current="page"
-            exact={true}
-            to="/media?profile=profile2"
-          >
-            profile2
-          </NavLink>,
+          "children": "profile2",
+          "color": "primary",
+          "onClick": [Function],
+          "outline": true,
+          "tag": "button",
         },
         "ref": null,
-        "rendered": Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "function",
-          "props": Object {
-            "activeClassName": "active",
-            "aria-current": "page",
-            "children": "profile2",
-            "exact": true,
-            "to": "/media?profile=profile2",
-          },
-          "ref": null,
-          "rendered": "profile2",
-          "type": [Function],
-        },
-        "type": "li",
+        "rendered": "profile2",
+        "type": [Function],
       },
     ],
-    "type": "ul",
+    "type": [Function],
   },
   Symbol(enzyme.__nodes__): Array [
     Object {
       "instance": null,
       "key": undefined,
-      "nodeType": "host",
+      "nodeType": "function",
       "props": Object {
         "children": Array [
-          <li>
-            <NavLink
-              activeClassName="active"
-              aria-current="page"
-              exact={true}
-              to="/media?profile=profile1"
-            >
-              profile1
-            </NavLink>
-          </li>,
-          <li>
-            <NavLink
-              activeClassName="active"
-              aria-current="page"
-              exact={true}
-              to="/media?profile=profile2"
-            >
-              profile2
-            </NavLink>
-          </li>,
+          <Button
+            color="primary"
+            onClick={[Function]}
+            outline={true}
+            tag="button"
+          >
+            profile1
+          </Button>,
+          <Button
+            color="primary"
+            onClick={[Function]}
+            outline={true}
+            tag="button"
+          >
+            profile2
+          </Button>,
         ],
+        "className": "d-flex justify-content-md-center",
+        "role": "group",
+        "tag": "div",
+        "vertical": true,
       },
       "ref": null,
       "rendered": Array [
         Object {
           "instance": null,
           "key": "profile1",
-          "nodeType": "host",
+          "nodeType": "class",
           "props": Object {
-            "children": <NavLink
-              activeClassName="active"
-              aria-current="page"
-              exact={true}
-              to="/media?profile=profile1"
-            >
-              profile1
-            </NavLink>,
+            "children": "profile1",
+            "color": "primary",
+            "onClick": [Function],
+            "outline": true,
+            "tag": "button",
           },
           "ref": null,
-          "rendered": Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "function",
-            "props": Object {
-              "activeClassName": "active",
-              "aria-current": "page",
-              "children": "profile1",
-              "exact": true,
-              "to": "/media?profile=profile1",
-            },
-            "ref": null,
-            "rendered": "profile1",
-            "type": [Function],
-          },
-          "type": "li",
+          "rendered": "profile1",
+          "type": [Function],
         },
         Object {
           "instance": null,
           "key": "profile2",
-          "nodeType": "host",
+          "nodeType": "class",
           "props": Object {
-            "children": <NavLink
-              activeClassName="active"
-              aria-current="page"
-              exact={true}
-              to="/media?profile=profile2"
-            >
-              profile2
-            </NavLink>,
+            "children": "profile2",
+            "color": "primary",
+            "onClick": [Function],
+            "outline": true,
+            "tag": "button",
           },
           "ref": null,
-          "rendered": Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "function",
-            "props": Object {
-              "activeClassName": "active",
-              "aria-current": "page",
-              "children": "profile2",
-              "exact": true,
-              "to": "/media?profile=profile2",
-            },
-            "ref": null,
-            "rendered": "profile2",
-            "type": [Function],
-          },
-          "type": "li",
+          "rendered": "profile2",
+          "type": [Function],
         },
       ],
-      "type": "ul",
+      "type": [Function],
     },
   ],
   Symbol(enzyme.__options__): Object {

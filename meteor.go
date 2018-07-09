@@ -14,6 +14,7 @@ import (
 	"meteor/thumbnails"
 	"meteor/webhook"
 	"net/http"
+	"path/filepath"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -41,11 +42,12 @@ func handleError(writer http.ResponseWriter, err error) {
 	fmt.Fprint(writer, err.Error())
 }
 
-func serveUI(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func serveUI(webclientPath string) func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	//Parse the html file
-	index := template.Must(template.ParseFiles("webclient/dist/index.html"))
-
-	index.Execute(rw, nil)
+	return func(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		index := template.Must(template.ParseFiles(filepath.Join(webclientPath, "index.html")))
+		index.Execute(rw, nil)
+	}
 }
 
 func main() {
@@ -75,9 +77,9 @@ func main() {
 
 	router := httprouter.New()
 
-	router.GET("/", serveUI)
-	router.GET("/media", serveUI)
-	router.ServeFiles("/webclient/*filepath", http.Dir("webclient"))
+	router.GET("/", serveUI(config.WebClientPath))
+	router.GET("/media", serveUI(config.WebClientPath))
+	router.ServeFiles("/web/*filepath", http.Dir(config.WebClientPath))
 
 	router.GET("/ws", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		webhook.AddClient(w, r)
