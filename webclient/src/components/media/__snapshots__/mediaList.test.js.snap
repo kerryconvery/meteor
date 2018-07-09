@@ -8,12 +8,12 @@ ShallowWrapper {
     items={
       Array [
         Object {
-          "isDirector": false,
+          "isDirectory": false,
           "name": "media1",
           "uri": "",
         },
         Object {
-          "isDirector": true,
+          "isDirectory": true,
           "name": "media2",
           "uri": "",
         },
@@ -61,7 +61,7 @@ ShallowWrapper {
         >
           <img
             alt=""
-            src="/api/profiles/profile1/media/thumbnail?uri="
+            src="/web/assets/folder.png"
           />
           <span
             style={
@@ -142,7 +142,7 @@ ShallowWrapper {
           "children": Array [
             <img
               alt=""
-              src="/api/profiles/profile1/media/thumbnail?uri="
+              src="/web/assets/folder.png"
             />,
             <span
               style={
@@ -165,7 +165,7 @@ ShallowWrapper {
             "nodeType": "host",
             "props": Object {
               "alt": "",
-              "src": "/api/profiles/profile1/media/thumbnail?uri=",
+              "src": "/web/assets/folder.png",
             },
             "ref": null,
             "rendered": null,
@@ -224,7 +224,7 @@ ShallowWrapper {
           >
             <img
               alt=""
-              src="/api/profiles/profile1/media/thumbnail?uri="
+              src="/web/assets/folder.png"
             />
             <span
               style={
@@ -305,7 +305,7 @@ ShallowWrapper {
             "children": Array [
               <img
                 alt=""
-                src="/api/profiles/profile1/media/thumbnail?uri="
+                src="/web/assets/folder.png"
               />,
               <span
                 style={
@@ -328,7 +328,7 @@ ShallowWrapper {
               "nodeType": "host",
               "props": Object {
                 "alt": "",
-                "src": "/api/profiles/profile1/media/thumbnail?uri=",
+                "src": "/web/assets/folder.png",
               },
               "ref": null,
               "rendered": null,

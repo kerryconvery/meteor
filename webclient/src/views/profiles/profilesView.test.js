@@ -27,6 +27,23 @@ describe('ProfilesView', () => {
     expect(loadMediaSpy).toHaveBeenCalled();
   });
 
+  it('should add the item name to the history', () => {
+    const profile = {
+      name: 'profile1',
+    };
+
+    const wrapper = mountComponent();
+
+    wrapper.instance().onProfileClick(profile);
+    expect(props.history[0]).toEqual(`/media?profile=${profile.name}`);
+  });
+
+  it('should set profile list onClick to onProfileClick', () => {
+    const wrapper = mountComponent();
+    const profileList = wrapper.find('ProfileList');
+    expect(profileList.prop('onClick')).toEqual(wrapper.instance().onProfileClick);
+  });
+
   describe('loadProfiles', () => {
     it('should call getProfiles and put the returned profiles on the state', async () => {
       const wrapper = mountComponent();

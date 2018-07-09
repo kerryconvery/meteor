@@ -30,7 +30,7 @@ class ProfilesView extends React.Component {
 }
 
 ProfilesView.propTypes = {
-  history: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  history: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default ProfilesView;

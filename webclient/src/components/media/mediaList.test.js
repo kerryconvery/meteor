@@ -25,12 +25,12 @@ test('renders a list of media', () => {
   const media = [
     {
       name: 'media1',
-      isDirector: false,
+      isDirectory: false,
       uri: '',
     },
     {
       name: 'media2',
-      isDirector: true,
+      isDirectory: true,
       uri: '',
     },
   ];

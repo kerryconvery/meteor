@@ -31,7 +31,7 @@ class MediaView extends React.Component {
   };
 
   loadMedia = async (params) => {
-    const media = await getMedia(params.profile, params.uri).catch(() => []);
+    const media = await getMedia(params.profile, params.uri);
     this.setState({ profile: params.profile, media });
   }
 
@@ -48,7 +48,7 @@ MediaView.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string,
   }).isRequired,
-  history: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  history: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default MediaView;

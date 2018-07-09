@@ -17,6 +17,10 @@ describe('MediaView', () => {
     return shallow(<MediaView location={props.location} history={props.history} />, { disableLifecycleMethods: true });
   };
 
+  beforeEach(() => {
+    Services.getMedia.mockResolvedValue([]);
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -63,17 +67,6 @@ describe('MediaView', () => {
       expect(Services.getMedia).toHaveBeenCalledWith(params.profile, params.uri);
       expect(wrapper.state().profile).toEqual(params.profile);
       expect(wrapper.state().media).toEqual(media);
-    });
-
-    it('should put an empty media set on the state getMedia throws an error', async () => {
-      const params = { profile: 'profile1', uri: '/folder1/folder2' };
-      Services.getMedia.mockRejectedValue({});
-      const wrapper = mountComponent();
-
-      await wrapper.instance().loadMedia(params);
-
-      expect(wrapper.state().profile).toEqual(params.profile);
-      expect(wrapper.state().media).toEqual([]);
     });
   });
 
