@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup } from 'reactstrap';
 
 const profileItem = onClick => item => (
-  <Button key={item.name} outline color='primary' onClick={() => onClick(item)}>{item.name}</Button>
+  <Button key={item.name} outline size='lg' color='primary' onClick={() => onClick(item)}>{item.name}</Button>
 );
 
 const ProfileList = props => (
-  <ButtonGroup className='d-flex justify-content-md-center' vertical>{props.items.map(profileItem(props.onClick))}</ButtonGroup>
+  <ButtonGroup className='d-flex justify-content-lg-center' vertical>{props.items.map(profileItem(props.onClick))}</ButtonGroup>
 );
 
 ProfileList.propTypes = {

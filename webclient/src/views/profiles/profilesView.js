@@ -13,9 +13,15 @@ class ProfilesView extends React.Component {
     this.loadProfiles();
   }
 
-  onProfileClick = (profile) => {
+  onProfileClick = (profile, getPassword) => {
+    if (profile.parentalPassword !== '' && profile.parentalPassword !== getPassword()) {
+      return;
+    }
+
     this.props.history.push(`/media?${queryString.stringify({ profile: profile.name })}`);
   }
+
+  promptPassword = () => prompt('Please enter the password to continue');
 
   loadProfiles = async () => {
     const profiles = await getProfiles().catch(() => []);
@@ -24,7 +30,10 @@ class ProfilesView extends React.Component {
 
   render = () => (
     <div style={{ margin: '10px' }}>
-      <ProfileList items={this.state.profiles} onClick={this.onProfileClick} />
+      <ProfileList
+        items={this.state.profiles}
+        onClick={profile => this.onProfileClick(profile, this.promptPassword)}
+      />
     </div>
   )
 }

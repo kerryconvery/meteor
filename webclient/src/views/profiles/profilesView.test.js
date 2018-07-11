@@ -4,15 +4,18 @@ import ProfilesView from './profilesView';
 import * as Services from '../mediaServices';
 
 jest.mock('../mediaServices');
+global.prompt = jest.fn();
 
 describe('ProfilesView', () => {
-  const props = {
-    history: [],
-  };
+  let props;
 
-  const mountComponent = () => (
-    shallow(<ProfilesView {...props} />, { disableLifecycleMethods: true })
-  );
+  const mountComponent = () => {
+    props = {
+      history: [],
+    };
+
+    return shallow(<ProfilesView {...props} />, { disableLifecycleMethods: true });
+  };
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -27,21 +30,63 @@ describe('ProfilesView', () => {
     expect(loadMediaSpy).toHaveBeenCalled();
   });
 
-  it('should add the item name to the history', () => {
+  it('should set profile list onClick to onProfileClick', () => {
     const profile = {
       name: 'profile1',
     };
 
     const wrapper = mountComponent();
 
-    wrapper.instance().onProfileClick(profile);
-    expect(props.history[0]).toEqual(`/media?profile=${profile.name}`);
+    const profileList = wrapper.find('ProfileList');
+    const onClickSpy = jest.spyOn(wrapper.instance(), 'onProfileClick');
+    profileList.prop('onClick')(profile);
+    expect(onClickSpy).toBeCalledWith(profile, wrapper.instance().promptPassword);
   });
 
-  it('should set profile list onClick to onProfileClick', () => {
+  it('should call prompt', () => {
     const wrapper = mountComponent();
-    const profileList = wrapper.find('ProfileList');
-    expect(profileList.prop('onClick')).toEqual(wrapper.instance().onProfileClick);
+
+    wrapper.instance().promptPassword();
+
+    expect(global.prompt).toHaveBeenCalled();
+  });
+
+  describe('ProfileClick', () => {
+    it('should add the item name to the history if there is no password', () => {
+      const profile = {
+        name: 'profile1',
+        parentalPassword: '',
+      };
+
+      const wrapper = mountComponent();
+
+      wrapper.instance().onProfileClick(profile, () => {});
+      expect(props.history[0]).toEqual(`/media?profile=${profile.name}`);
+    });
+
+    it('should add the item name to the history if there the supplied password is correct', () => {
+      const profile = {
+        name: 'profile1',
+        parentalPassword: 'q',
+      };
+
+      const wrapper = mountComponent();
+
+      wrapper.instance().onProfileClick(profile, () => 'q');
+      expect(props.history[0]).toEqual(`/media?profile=${profile.name}`);
+    });
+
+    it('should not add the item name to the history if there the supplied password is incorrect', () => {
+      const profile = {
+        name: 'profile1',
+        parentalPassword: 'q',
+      };
+
+      const wrapper = mountComponent();
+
+      wrapper.instance().onProfileClick(profile, () => 'a');
+      expect(props.history.length).toEqual(0);
+    });
   });
 
   describe('loadProfiles', () => {
