@@ -9,9 +9,7 @@
             "name": "Media Player Classic",
             "launchCmd": "C:\\Program Files\\MPC-BE x64\\mpc-be64.exe",
             "launchArgs": [		
-                "/play",
-                "/fullscreen",
-                "/close"
+                "/play"
             ],
             "apiUrl": "http://localhost:13579"
         }

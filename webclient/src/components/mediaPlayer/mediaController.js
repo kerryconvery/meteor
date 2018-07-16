@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Progress, Button, ButtonGroup } from 'reactstrap';
+import Backboard from './backboard';
 
 export const playerState = {
   paused: 1,
   playing: 2,
 };
 
-const MediaPlayer = props => (
-  <div style={{ backgroundColor: 'lightgray' }}>
+const MediaController = props => (
+  <Backboard>
     <div style={{ marginLeft: '10px', marginRight: '10px' }}>
       <span>Now Playing: {props.nowPlaying}</span>
       <Progress
@@ -26,10 +27,10 @@ const MediaPlayer = props => (
         <Button color='info' onClick={props.onPark}>Park</Button>
       </ButtonGroup>
     </div>
-  </div>
+  </Backboard>
 );
 
-MediaPlayer.propTypes = {
+MediaController.propTypes = {
   nowPlaying: PropTypes.string.isRequired,
   playerState: PropTypes.number.isRequired,
   position: PropTypes.number.isRequired,
@@ -41,4 +42,4 @@ MediaPlayer.propTypes = {
   onResume: PropTypes.func.isRequired,
 };
 
-export default MediaPlayer;
+export default MediaController;

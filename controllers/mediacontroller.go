@@ -13,19 +13,41 @@ type broadcaster interface {
 	Broadcast(payload interface{})
 }
 
+type datastore interface {
+	UpdatePosition(key string, position int) error
+	Delete(key string)
+}
+
 // MediaController represents a controller of a media player
 type MediaController struct {
 	Controller
+	store            datastore
 	broadcaster      broadcaster
 	profilesProvider profileSource
 	mediaPlayer      mediaplayers.MediaPlayer
 }
 
 // NewMediaController returns a new instance of the media controller
-func NewMediaController(profilesProvider profileSource, mediaPlayer mediaplayers.MediaPlayer, broadcaster broadcaster) MediaController {
-	controller := MediaController{profilesProvider: profilesProvider, mediaPlayer: mediaPlayer, broadcaster: broadcaster}
+func NewMediaController(profilesProvider profileSource, mediaPlayer mediaplayers.MediaPlayer, broadcaster broadcaster, store datastore) MediaController {
+	controller := MediaController{
+		store:            store,
+		profilesProvider: profilesProvider,
+		mediaPlayer:      mediaPlayer,
+		broadcaster:      broadcaster,
+	}
+
 	go controller.watchMediaPlayer()
 	return controller
+}
+
+func (c MediaController) updateStore(info mediaplayers.MediaPlayerInfo) {
+	if info.State == 2 {
+		c.store.UpdatePosition(info.NowPlaying, info.Position)
+	}
+
+	if info.Position == info.Duration {
+		c.store.Delete(info.NowPlaying)
+	}
 }
 
 func (c MediaController) watchMediaPlayer() {
@@ -35,6 +57,12 @@ func (c MediaController) watchMediaPlayer() {
 		if err != nil {
 			c.broadcaster.Broadcast(mediaplayers.MediaPlayerInfo{Position: 0, Duration: 0, State: 0})
 		}
+
+		if info.Position > 0 && info.Position == info.Duration {
+			c.mediaPlayer.Exit()
+		}
+
+		c.updateStore(info)
 
 		c.broadcaster.Broadcast(info)
 	}

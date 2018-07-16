@@ -3,4 +3,7 @@ assets/thumbnails
 webclient/node_modules
 webclient/coverage
 webclient/dist
+test_data/db
+data
+
 

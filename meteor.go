@@ -7,6 +7,7 @@ import (
 	"log"
 	"meteor/configuration"
 	"meteor/controllers"
+	"meteor/db"
 	"meteor/filesystem"
 	"meteor/media"
 	"meteor/mediaplayers"
@@ -62,6 +63,7 @@ func main() {
 	thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
 	webhook := webhook.New()
+	db := db.New("./data")
 	mediaController := controllers.NewMediaController(
 		profileProvider,
 		mediaplayers.New(
@@ -70,6 +72,7 @@ func main() {
 			config.MediaPlayers[0].APIUrl,
 		),
 		&webhook,
+		db,
 	)
 
 	webhook.Start()
