@@ -2,6 +2,8 @@ package db
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 
 	"github.com/dgraph-io/badger"
 )
@@ -13,9 +15,15 @@ type Store struct {
 
 // New returns a new instance of Store
 func (s *Store) open(dbLocation string) {
+	lockfile := filepath.Join(dbLocation, "LOCK")
+
+	_ = os.Remove(lockfile)
+
 	options := badger.DefaultOptions
 	options.Dir = dbLocation
 	options.ValueDir = dbLocation
+	options.Truncate = true
+	options.SyncWrites = false
 	db, err := badger.Open(options)
 
 	if err != nil {
