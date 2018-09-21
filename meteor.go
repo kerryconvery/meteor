@@ -10,6 +10,7 @@ import (
 	"meteor/db"
 	"meteor/filesystem"
 	"meteor/media"
+	"meteor/mediaWatchers"
 	"meteor/mediaplayers"
 	"meteor/profiles"
 	"meteor/thumbnails"
@@ -63,7 +64,11 @@ func main() {
 	thumbnailProvider := thumbnails.New(config.ThumbnailPath, config.AssetPath, filesystem)
 	profileController := controllers.NewProfilesController(profileProvider, media.New(filesystem), thumbnailProvider)
 	webhook := webhook.New()
-	db := db.New("./data")
+	store := db.NewMediaStore(config.DatastorePath)
+
+	defer webhook.Stop()
+	defer store.Close()
+
 	mediaController := controllers.NewMediaController(
 		profileProvider,
 		mediaplayers.New(
@@ -71,12 +76,22 @@ func main() {
 			config.MediaPlayers[0].LaunchArgs,
 			config.MediaPlayers[0].APIUrl,
 		),
-		&webhook,
-		db,
+		store,
 	)
 
 	webhook.Start()
-	// defer webhook.Stop()
+
+	terminate := make(chan bool, 2)
+	terminate <- false
+
+	defer func() { terminate <- true }()
+	defer webhook.Stop()
+
+	go mediaController.WatchMediaPlayer(
+		terminate,
+		mediaWatchers.NewStateNotifier(&webhook),
+		mediaWatchers.NewMediaStateRecorder(store),
+	)
 
 	router := httprouter.New()
 
@@ -152,6 +167,13 @@ func main() {
 
 	router.POST("/api/media/resume", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := mediaController.ResumeMediaPlayer()
+		if err != nil {
+			handleError(w, err)
+		}
+	})
+
+	router.POST("/api/media/restart", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		err := mediaController.RestartMediaPlayer()
 		if err != nil {
 			handleError(w, err)
 		}

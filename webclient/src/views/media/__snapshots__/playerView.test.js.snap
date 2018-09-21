@@ -65,9 +65,8 @@ ShallowWrapper {
     "props": Object {
       "duration": 0,
       "nowPlaying": "",
-      "onPark": [Function],
       "onPause": [MockFunction],
-      "onRestart": [Function],
+      "onRestart": [MockFunction],
       "onResume": [MockFunction],
       "onStop": [MockFunction],
       "playerState": 2,
@@ -85,9 +84,8 @@ ShallowWrapper {
       "props": Object {
         "duration": 0,
         "nowPlaying": "",
-        "onPark": [Function],
         "onPause": [MockFunction],
-        "onRestart": [Function],
+        "onRestart": [MockFunction],
         "onResume": [MockFunction],
         "onStop": [MockFunction],
         "playerState": 2,

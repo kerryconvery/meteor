@@ -32,7 +32,7 @@ func TestGetDirectory(t *testing.T) {
 
 	tests.ExpectNoError(err, t)
 
-	if files[0].Name != "profiles" {
+	if files[0].Name != "db" {
 		t.Errorf("Expected profiles but got %s", files[0].Name)
 	}
 

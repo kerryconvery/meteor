@@ -70,13 +70,6 @@ ShallowWrapper {
           >
             Stop
           </Button>
-          <Button
-            color="info"
-            onClick={[Function]}
-            tag="button"
-          >
-            Park
-          </Button>
         </ButtonGroup>
       </div>,
     },
@@ -121,13 +114,6 @@ ShallowWrapper {
               tag="button"
             >
               Stop
-            </Button>
-            <Button
-              color="info"
-              onClick={[Function]}
-              tag="button"
-            >
-              Park
             </Button>
           </ButtonGroup>,
         ],
@@ -195,13 +181,6 @@ ShallowWrapper {
               >
                 Stop
               </Button>,
-              <Button
-                color="info"
-                onClick={[Function]}
-                tag="button"
-              >
-                Park
-              </Button>,
             ],
             "className": "d-flex justify-content-sm-center",
             "role": "group",
@@ -249,20 +228,6 @@ ShallowWrapper {
               },
               "ref": null,
               "rendered": "Stop",
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "class",
-              "props": Object {
-                "children": "Park",
-                "color": "info",
-                "onClick": [Function],
-                "tag": "button",
-              },
-              "ref": null,
-              "rendered": "Park",
               "type": [Function],
             },
           ],
@@ -322,13 +287,6 @@ ShallowWrapper {
             >
               Stop
             </Button>
-            <Button
-              color="info"
-              onClick={[Function]}
-              tag="button"
-            >
-              Park
-            </Button>
           </ButtonGroup>
         </div>,
       },
@@ -373,13 +331,6 @@ ShallowWrapper {
                 tag="button"
               >
                 Stop
-              </Button>
-              <Button
-                color="info"
-                onClick={[Function]}
-                tag="button"
-              >
-                Park
               </Button>
             </ButtonGroup>,
           ],
@@ -447,13 +398,6 @@ ShallowWrapper {
                 >
                   Stop
                 </Button>,
-                <Button
-                  color="info"
-                  onClick={[Function]}
-                  tag="button"
-                >
-                  Park
-                </Button>,
               ],
               "className": "d-flex justify-content-sm-center",
               "role": "group",
@@ -501,20 +445,6 @@ ShallowWrapper {
                 },
                 "ref": null,
                 "rendered": "Stop",
-                "type": [Function],
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "class",
-                "props": Object {
-                  "children": "Park",
-                  "color": "info",
-                  "onClick": [Function],
-                  "tag": "button",
-                },
-                "ref": null,
-                "rendered": "Park",
                 "type": [Function],
               },
             ],
@@ -606,13 +536,6 @@ ShallowWrapper {
           >
             Stop
           </Button>
-          <Button
-            color="info"
-            onClick={[Function]}
-            tag="button"
-          >
-            Park
-          </Button>
         </ButtonGroup>
       </div>,
     },
@@ -657,13 +580,6 @@ ShallowWrapper {
               tag="button"
             >
               Stop
-            </Button>
-            <Button
-              color="info"
-              onClick={[Function]}
-              tag="button"
-            >
-              Park
             </Button>
           </ButtonGroup>,
         ],
@@ -731,13 +647,6 @@ ShallowWrapper {
               >
                 Stop
               </Button>,
-              <Button
-                color="info"
-                onClick={[Function]}
-                tag="button"
-              >
-                Park
-              </Button>,
             ],
             "className": "d-flex justify-content-sm-center",
             "role": "group",
@@ -785,20 +694,6 @@ ShallowWrapper {
               },
               "ref": null,
               "rendered": "Stop",
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "class",
-              "props": Object {
-                "children": "Park",
-                "color": "info",
-                "onClick": [Function],
-                "tag": "button",
-              },
-              "ref": null,
-              "rendered": "Park",
               "type": [Function],
             },
           ],
@@ -858,13 +753,6 @@ ShallowWrapper {
             >
               Stop
             </Button>
-            <Button
-              color="info"
-              onClick={[Function]}
-              tag="button"
-            >
-              Park
-            </Button>
           </ButtonGroup>
         </div>,
       },
@@ -909,13 +797,6 @@ ShallowWrapper {
                 tag="button"
               >
                 Stop
-              </Button>
-              <Button
-                color="info"
-                onClick={[Function]}
-                tag="button"
-              >
-                Park
               </Button>
             </ButtonGroup>,
           ],
@@ -983,13 +864,6 @@ ShallowWrapper {
                 >
                   Stop
                 </Button>,
-                <Button
-                  color="info"
-                  onClick={[Function]}
-                  tag="button"
-                >
-                  Park
-                </Button>,
               ],
               "className": "d-flex justify-content-sm-center",
               "role": "group",
@@ -1037,20 +911,6 @@ ShallowWrapper {
                 },
                 "ref": null,
                 "rendered": "Stop",
-                "type": [Function],
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "class",
-                "props": Object {
-                  "children": "Park",
-                  "color": "info",
-                  "onClick": [Function],
-                  "tag": "button",
-                },
-                "ref": null,
-                "rendered": "Park",
                 "type": [Function],
               },
             ],

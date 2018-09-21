@@ -1,82 +1,65 @@
 package controllers
 
 import (
+	"meteor/db"
 	"meteor/mediaplayers"
 	"meteor/profiles"
 	"path/filepath"
 )
 
-type profileSource interface {
+type mediaPlayerListener interface {
+	Notify(status mediaplayers.MediaPlayerStatus)
+}
+type profileProvider interface {
 	GetProfile(profileName string) (profiles.Profile, error)
 }
-type broadcaster interface {
-	Broadcast(payload interface{})
-}
 
-type datastore interface {
-	UpdatePosition(key string, position int) error
-	Delete(key string)
+type mediaStore interface {
+	Read(key string) (db.MediaRecord, error)
 }
 
 // MediaController represents a controller of a media player
 type MediaController struct {
 	Controller
-	store            datastore
-	broadcaster      broadcaster
-	profilesProvider profileSource
-	mediaPlayer      mediaplayers.MediaPlayer
+	store           mediaStore
+	profileProvider profileProvider
+	mediaPlayer     mediaplayers.MediaPlayer
 }
 
 // NewMediaController returns a new instance of the media controller
-func NewMediaController(profilesProvider profileSource, mediaPlayer mediaplayers.MediaPlayer, broadcaster broadcaster, store datastore) MediaController {
-	controller := MediaController{
-		store:            store,
-		profilesProvider: profilesProvider,
-		mediaPlayer:      mediaPlayer,
-		broadcaster:      broadcaster,
-	}
-
-	go controller.watchMediaPlayer()
-	return controller
-}
-
-func (c MediaController) updateStore(info mediaplayers.MediaPlayerInfo) {
-	if info.State == 2 {
-		c.store.UpdatePosition(info.NowPlaying, info.Position)
-	}
-
-	if info.Position == info.Duration {
-		c.store.Delete(info.NowPlaying)
+func NewMediaController(profileProvider profileProvider, mediaPlayer mediaplayers.MediaPlayer, store mediaStore) MediaController {
+	return MediaController{
+		store:           store,
+		profileProvider: profileProvider,
+		mediaPlayer:     mediaPlayer,
 	}
 }
 
-func (c MediaController) watchMediaPlayer() {
-	for {
-		info, err := c.mediaPlayer.GetInfo()
+func (c MediaController) getStartingPosition(mediaFile string) int {
+	data, err := c.store.Read(mediaFile)
 
-		if err != nil {
-			c.broadcaster.Broadcast(mediaplayers.MediaPlayerInfo{Position: 0, Duration: 0, State: 0})
-		}
-
-		if info.Position > 0 && info.Position == info.Duration {
-			c.mediaPlayer.Exit()
-		}
-
-		c.updateStore(info)
-
-		c.broadcaster.Broadcast(info)
+	if err != nil {
+		return 0
 	}
+
+	if data.Duration-data.Position < 5 {
+		return 0
+	}
+
+	return data.Position
 }
 
 // LaunchMediaFile plays a media file
 func (c MediaController) LaunchMediaFile(profileName, mediafile string) (TextResponse, error) {
-	profile, err := c.profilesProvider.GetProfile(profileName)
+	profile, err := c.profileProvider.GetProfile(profileName)
 
 	if err != nil {
 		return TextResponse{}, err
 	}
 
-	playerErr := c.mediaPlayer.Play(filepath.Join(profile.MediaPath, mediafile), profile.MediaArgs)
+	options := mediaplayers.MediaOptions{Position: c.getStartingPosition(filepath.Base(mediafile))}
+
+	playerErr := c.mediaPlayer.Play(filepath.Join(profile.MediaPath, mediafile), profile.MediaArgs, options)
 
 	return c.TextResponse(201, ""), playerErr
 }
@@ -94,4 +77,42 @@ func (c MediaController) PauseMediaPlayer() error {
 // ResumeMediaPlayer instructs the media player to close
 func (c MediaController) ResumeMediaPlayer() error {
 	return c.mediaPlayer.Resume()
+}
+
+// RestartMediaPlayer restarts the media from the beginning
+func (c MediaController) RestartMediaPlayer() error {
+	return c.mediaPlayer.Restart()
+}
+
+func (c MediaController) reportMediaStatus(status mediaplayers.MediaPlayerStatus, listeners []mediaPlayerListener) {
+	for _, listener := range listeners {
+		listener.Notify(status)
+	}
+}
+
+//WatchMediaPlayer watches the media player and reports the current status to the listener
+func (c MediaController) WatchMediaPlayer(signal chan bool, listeners ...mediaPlayerListener) {
+	for terminate := range signal {
+		if terminate {
+			break
+		}
+
+		var status mediaplayers.MediaPlayerStatus
+
+		temp, err := c.mediaPlayer.GetStatus()
+
+		if err != nil {
+			status = mediaplayers.MediaPlayerStatus{
+				Position: 0,
+				Duration: 0,
+				State:    0,
+			}
+		} else {
+			status = temp
+		}
+
+		c.reportMediaStatus(status, listeners)
+
+		signal <- false
+	}
 }

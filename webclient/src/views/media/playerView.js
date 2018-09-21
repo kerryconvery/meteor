@@ -1,5 +1,5 @@
 import React from 'react';
-import { pause, stop, resume, listen } from '../mediaServices';
+import { pause, stop, resume, restart, listen } from '../mediaServices';
 import MediaController from '../../components/mediaPlayer/mediaController';
 import OfflineButton from '../../components/mediaPlayer/offlineButton';
 
@@ -41,8 +41,7 @@ class PlayerView extends React.Component {
         onPause={pause}
         onStop={stop}
         onResume={resume}
-        onPark={() => {}}
-        onRestart={() => {}}
+        onRestart={restart}
       />);
     }
 

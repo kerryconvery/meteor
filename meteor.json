@@ -3,6 +3,7 @@
     "assetPath": "./assets",
     "thumbnailPath": "./assets/thumbnails",
     "webclientPath": "./webclient/dist",
+    "datastorePath": "./data",
     "mediaplayers": [
         {
             "id": "mpc",

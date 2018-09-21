@@ -3,7 +3,6 @@ package thumbnails
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"meteor/tests"
 	"testing"
 )
@@ -19,7 +18,6 @@ const defaultImage = "Default Image"
 const existingImage = "Existing Image"
 
 func (p mockImageSource) generateVideoThumbnail(filename string) (*bytes.Buffer, error) {
-	fmt.Println(filename)
 	if filename == "valid_path\\gen_image" {
 		return bytes.NewBufferString(generatedImage), nil
 	}

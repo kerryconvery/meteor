@@ -20,6 +20,7 @@ type Configuration struct {
 	WebClientPath string                     `json:"webclientPath"`
 	MediaPlayers  []MediaPlayerConfiguration `json:"mediaplayers"`
 	ListenPort    int                        `json:"listenPort"`
+	DatastorePath string                     `json:"datastorePath"`
 }
 
 // GetConfiguration reads a configuration file and returns back a configuration object.

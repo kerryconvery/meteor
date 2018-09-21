@@ -12,11 +12,20 @@ func TestBuildArguments(t *testing.T) {
 
 	playerArgs := []string{"/play", "/fullscreen", "/autoclose"}
 	mediaArgs := []string{"/audiorenderer 2", "/someotherarg"}
+	options := MediaOptions{Position: 10}
 
-	launchArgs := mediaplayer.buildArguments("media.avi", playerArgs, mediaArgs)
+	launchArgs := mediaplayer.buildArguments("media.avi", playerArgs, mediaArgs, options)
 
-	if len(launchArgs) != 7 {
-		t.Errorf("Expected 7 arguments but got %d", len(launchArgs))
+	if len(launchArgs) != 9 {
+		t.Errorf("Expected 9 arguments but got %d", len(launchArgs))
+	}
+
+	if launchArgs[7] != "/start" {
+		t.Errorf("Expected start switch but got %s", launchArgs[7])
+	}
+
+	if launchArgs[8] != "10" {
+		t.Errorf("Expected start switch value 10 but got %s", launchArgs[8])
 	}
 }
 

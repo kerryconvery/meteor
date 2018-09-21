@@ -3,20 +3,31 @@ package controllers
 import (
 	"errors"
 	"fmt"
+	"meteor/db"
 	"meteor/mediaplayers"
 	"meteor/profiles"
 	"meteor/tests"
 	"testing"
+
+	"github.com/stretchr/testify/mock"
 )
 
 type profilesProvider struct {
 }
 
-type mockBroadcaster struct {
+type mockStore struct {
 }
 
-func (m mockBroadcaster) Broadcast(payload interface{}) {
+type mockMediaPlayerListener struct {
+	mock.Mock
+	signalChan chan bool
+}
 
+func (m mockStore) Read(key string) (db.MediaRecord, error) {
+	return db.MediaRecord{
+		Position: 0,
+		Duration: 0,
+	}, nil
 }
 
 func (p profilesProvider) GetProfile(profileName string) (profiles.Profile, error) {
@@ -27,9 +38,10 @@ func (p profilesProvider) GetProfile(profileName string) (profiles.Profile, erro
 }
 
 type mockMediaPlayer struct {
+	mock.Mock
 }
 
-func (m mockMediaPlayer) Play(media string, mediaArgs []string) error {
+func (m mockMediaPlayer) Play(media string, mediaArgs []string, options mediaplayers.MediaOptions) error {
 	if media == "valid_path\\valid_media_file" && mediaArgs[0] == "/arg" {
 		return nil
 	}
@@ -48,15 +60,29 @@ func (m mockMediaPlayer) Resume() error {
 	return nil
 }
 
-func (m mockMediaPlayer) GetInfo() (mediaplayers.MediaPlayerInfo, error) {
-	return mediaplayers.MediaPlayerInfo{}, nil
+func (m mockMediaPlayer) Restart() error {
+	return nil
 }
 
-func GetMediaController() MediaController {
-	return NewMediaController(profilesProvider{}, mockMediaPlayer{}, mockBroadcaster{})
+func (m *mockMediaPlayer) GetStatus() (mediaplayers.MediaPlayerStatus, error) {
+	args := m.Called()
+	return args.Get(0).(mediaplayers.MediaPlayerStatus), args.Error(1)
 }
+
+func (m *mockMediaPlayerListener) Notify(status mediaplayers.MediaPlayerStatus) {
+	m.Called(status)
+	m.signalChan <- true
+}
+
+func getMediaController() MediaController {
+	mediaPlayer := mockMediaPlayer{}
+	mediaPlayer.On("GetStatus").Return(mediaplayers.MediaPlayerStatus{}, nil)
+
+	return NewMediaController(profilesProvider{}, &mediaPlayer, mockStore{})
+}
+
 func TestLaunchMediaFile(t *testing.T) {
-	controller := GetMediaController()
+	controller := getMediaController()
 
 	response, err := controller.LaunchMediaFile("valid_profile", "valid_media_file")
 
@@ -67,9 +93,33 @@ func TestLaunchMediaFile(t *testing.T) {
 	}
 }
 func TestLaunchMediaFileError(t *testing.T) {
-	controller := GetMediaController()
+	controller := getMediaController()
 
 	_, err := controller.LaunchMediaFile("valid_profile", "invalid_media_file")
 
 	tests.ExpectError(err, t)
+}
+
+func TestWatchMediaPlayer(t *testing.T) {
+	signalChan := make(chan bool, 2)
+	signalChan <- false
+
+	defer func() { signalChan <- true }()
+
+	status := mediaplayers.MediaPlayerStatus{}
+	mediaPlayer := mockMediaPlayer{}
+
+	controller := NewMediaController(profilesProvider{}, &mediaPlayer, mockStore{})
+
+	listener := &mockMediaPlayerListener{}
+	listener.signalChan = make(chan bool, 1)
+
+	mediaPlayer.On("GetStatus").Return(status, nil)
+	listener.On("Notify", status)
+
+	go controller.WatchMediaPlayer(signalChan, listener)
+
+	<-listener.signalChan
+
+	listener.AssertExpectations(t)
 }

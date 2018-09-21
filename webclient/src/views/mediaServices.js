@@ -8,6 +8,7 @@ export const getProfiles = () => axios.get('/api/profiles').then(res => res.data
 export const pause = () => axios.post('api/media/pause');
 export const stop = () => axios.delete('api/media');
 export const resume = () => axios.post('api/media/resume');
+export const restart = () => axios.post('api/media/restart');
 export const listen = (onMessage, onClose) => {
   const ws = new WebSocket(`ws://${window.location.host}/ws`);
   ws.addEventListener('message', event => onMessage(JSON.parse(event.data)));

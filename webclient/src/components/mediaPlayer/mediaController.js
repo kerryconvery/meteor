@@ -24,7 +24,6 @@ const MediaController = props => (
             <Button color='info' onClick={props.onResume}>Resume</Button>
         }
         <Button color='info' onClick={props.onStop}>Stop</Button>
-        <Button color='info' onClick={props.onPark}>Park</Button>
       </ButtonGroup>
     </div>
   </Backboard>
@@ -38,7 +37,6 @@ MediaController.propTypes = {
   onRestart: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired,
   onStop: PropTypes.func.isRequired,
-  onPark: PropTypes.func.isRequired,
   onResume: PropTypes.func.isRequired,
 };
 
