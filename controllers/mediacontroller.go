@@ -42,11 +42,11 @@ func (c MediaController) getStartingPosition(mediaFile string) int {
 		return 0
 	}
 
-	if data.Duration-data.Position < 5 {
+	if data.Duration-data.Position <= 10000 {
 		return 0
 	}
 
-	return data.Position
+	return data.Position - 3000
 }
 
 // LaunchMediaFile plays a media file
